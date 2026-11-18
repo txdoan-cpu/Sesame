@@ -3,7 +3,10 @@
     "name": "Sesame",
     "tagline": "AI Instructor demo — Grade 8 Math, St. John's, NL",
     "demoNotice": "Demo only. All learner data is made up.",
-    "healthLink": "Check the Claude API connection"
+    "healthLink": "Check the Claude API connection",
+    "loginLink": "Log in",
+    "signUpLink": "Create a parent account",
+    "loading": "Loading…"
   },
   "health": {
     "title": "System health",
@@ -18,5 +21,71 @@
     "error": "What happened",
     "retry": "Check again",
     "back": "Back to home"
+  },
+  "lang": {
+    "label": "Language",
+    "en": "English",
+    "vi": "Tiếng Việt"
+  },
+  "auth": {
+    "loginTitle": "Log in",
+    "parentLoginTitle": "Parents",
+    "signUpTitle": "Create a parent account",
+    "signUpIntro": "You will add your child's account after this step.",
+    "displayName": "Your name",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters.",
+    "loginButton": "Log in",
+    "signUpButton": "Create account",
+    "pending": "Please wait…",
+    "noAccount": "New here?",
+    "haveAccount": "Already have an account?",
+    "logout": "Log out",
+    "notConfigured": "Accounts are not set up yet. Add the Supabase settings to .env.local.",
+    "errors": {
+      "invalid_input": "Please check the fields and try again.",
+      "invalid_credentials": "That email or password is not right.",
+      "email_taken": "An account with this email already exists. Try logging in.",
+      "username_taken": "That username is taken. Please pick another one.",
+      "not_configured": "Accounts are not set up yet.",
+      "rate_limited": "Too many tries. Please wait a few minutes.",
+      "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "parent": {
+    "title": "Parent dashboard",
+    "welcome": "Welcome, {name}",
+    "childrenTitle": "Your children",
+    "noChildren": "No learner accounts yet. Create one below.",
+    "logsInAs": "Username",
+    "addChildTitle": "Create a learner account",
+    "addChildIntro": "Your child logs in with this username and password. Write them down and share them with your child.",
+    "childName": "Child's first name",
+    "username": "Username",
+    "usernameHint": "3–20 characters: lowercase letters, numbers or _",
+    "childPassword": "Password for your child",
+    "addChildButton": "Create learner account",
+    "childCreated": "Learner account created."
+  },
+  "learner": {
+    "login": {
+      "title": "Students",
+      "username": "Username",
+      "password": "Password",
+      "button": "Log in",
+      "pending": "Please wait…",
+      "errors": {
+        "invalid_input": "Please type your username and password.",
+        "invalid_credentials": "That username or password is not right. Ask your parent if you forgot.",
+        "rate_limited": "Too many tries. Please wait a few minutes.",
+        "unknown": "Something went wrong. Please try again."
+      }
+    },
+    "home": {
+      "greeting": "Hi, {name}!",
+      "intro": "Your lessons will show up here soon.",
+      "logout": "Log out"
+    }
   }
 }

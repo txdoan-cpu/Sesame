@@ -3,7 +3,10 @@
     "name": "Sesame",
     "tagline": "Bản demo AI Instructor — Toán lớp 8, St. John's, NL",
     "demoNotice": "Chỉ là bản demo. Mọi dữ liệu học sinh đều là dữ liệu giả.",
-    "healthLink": "Kiểm tra kết nối Claude API"
+    "healthLink": "Kiểm tra kết nối Claude API",
+    "loginLink": "Đăng nhập",
+    "signUpLink": "Tạo tài khoản phụ huynh",
+    "loading": "Đang tải…"
   },
   "health": {
     "title": "Tình trạng hệ thống",
@@ -18,5 +21,51 @@
     "error": "Chuyện gì đã xảy ra",
     "retry": "Kiểm tra lại",
     "back": "Về trang chủ"
+  },
+  "lang": {
+    "label": "Ngôn ngữ",
+    "en": "English",
+    "vi": "Tiếng Việt"
+  },
+  "auth": {
+    "loginTitle": "Đăng nhập",
+    "parentLoginTitle": "Phụ huynh",
+    "signUpTitle": "Tạo tài khoản phụ huynh",
+    "signUpIntro": "Sau bước này, bạn sẽ tạo tài khoản cho con.",
+    "displayName": "Tên của bạn",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "passwordHint": "Ít nhất 8 ký tự.",
+    "loginButton": "Đăng nhập",
+    "signUpButton": "Tạo tài khoản",
+    "pending": "Vui lòng chờ…",
+    "noAccount": "Chưa có tài khoản?",
+    "haveAccount": "Đã có tài khoản?",
+    "logout": "Đăng xuất",
+    "notConfigured": "Chưa cài đặt tài khoản. Hãy thêm thông tin Supabase vào .env.local.",
+    "errors": {
+      "invalid_input": "Vui lòng kiểm tra lại thông tin và thử lại.",
+      "invalid_credentials": "Email hoặc mật khẩu không đúng.",
+      "email_taken": "Email này đã có tài khoản. Hãy thử đăng nhập.",
+      "username_taken": "Tên đăng nhập này đã có người dùng. Vui lòng chọn tên khác.",
+      "not_configured": "Chưa cài đặt tài khoản.",
+      "rate_limited": "Bạn đã thử quá nhiều lần. Vui lòng chờ vài phút.",
+      "unknown": "Có lỗi xảy ra. Vui lòng thử lại."
+    }
+  },
+  "parent": {
+    "title": "Trang phụ huynh",
+    "welcome": "Xin chào, {name}",
+    "childrenTitle": "Các con của bạn",
+    "noChildren": "Chưa có tài khoản học sinh. Hãy tạo ở bên dưới.",
+    "logsInAs": "Tên đăng nhập",
+    "addChildTitle": "Tạo tài khoản học sinh",
+    "addChildIntro": "Con bạn sẽ đăng nhập bằng tên đăng nhập và mật khẩu này. Hãy ghi lại và đưa cho con.",
+    "childName": "Tên của con",
+    "username": "Tên đăng nhập",
+    "usernameHint": "3–20 ký tự: chữ thường, số hoặc dấu _",
+    "childPassword": "Mật khẩu cho con",
+    "addChildButton": "Tạo tài khoản học sinh",
+    "childCreated": "Đã tạo tài khoản học sinh."
   }
 }
