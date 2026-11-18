@@ -53,7 +53,7 @@ npm run build      # production build — must pass before a round is "done"
 npm run lint
 npm run test       # Vitest
 npm run test:e2e   # Playwright
-npx supabase db push    # apply migrations to the Supabase cloud project (local Supabase/Docker is optional)
+npx supabase db push --remote   # apply migrations to the linked Supabase cloud project (newer CLI targets local Docker without --remote)
 ```
 
 Environment variables (never commit; list them in `.env.example`):
@@ -190,7 +190,7 @@ instead of data. The learner sees exactly what the parent sees on a "What my par
 | 2 Curriculum data | Migrations + seed from Appendix A: 17 outcomes (4 strands), 8PR2 indicators PR2.1–PR2.6, misconceptions M1–M5, sample profile demo-A (§9) | Outcome board renders grouped by strand |
 | 3 Lesson player | Write and load `content/lessons/8PR2-demo-A.json` from Appendix B (9 slides), narration, checkpoints, exit ticket, save results | Finishing the lesson updates outcome_status and mastery (test) |
 | 4 Voice Q&A | Mic button, `/api/ask`, spoken answer, resume, question tagging, math check, safety | 9/10 scripted test questions answered in slide context; 0 math errors; safety test passes |
-| 5 Parent portal | Dashboard, reward rules, schedule, learner sharing settings, "What my parent sees" | Sharing tests pass for every item in §7.3 |
+| 5 Parent portal | Dashboard, reward rules, schedule, learner sharing settings, "What my parent sees", parent resets a linked child's password (learners have no email) | Sharing tests pass for every item in §7.3 |
 | 6 Engagement & notifications | Sessions, idle detection, alerts, weekly summary, reward evaluation | Demo scenarios B (reward) and C (idle) run end to end |
 | 7 Polish | Responsive check on phone/tablet/desktop, demo accounts, demo script in `DEMO.md` | All demo targets in the proposal's roadmap table met |
 
