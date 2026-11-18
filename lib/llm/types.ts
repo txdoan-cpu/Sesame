@@ -32,3 +32,17 @@ export const HealthResultSchema = z.discriminatedUnion("ok", [
 
 export type HealthResult = z.infer<typeof HealthResultSchema>;
 export type HealthErrorCode = Extract<HealthResult, { ok: false }>["code"];
+
+/** One model call: a system prompt and one user message. */
+export type LlmRequest = {
+  system: string;
+  user: string;
+  maxTokens: number;
+  /** Ask the provider for a JSON object (we still parse defensively). */
+  json: boolean;
+  timeoutMs?: number;
+};
+
+export type LlmResult =
+  | { ok: true; text: string; provider: string; model: string }
+  | { ok: false; code: HealthErrorCode; error: string; provider: string; model: string };

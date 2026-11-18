@@ -1,6 +1,6 @@
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
-import type { HealthResult } from "./types";
+import type { HealthResult, LlmRequest, LlmResult } from "./types";
 import { describeClaudeError } from "./errors";
 
 export const SMOKE_TEST_PROMPT = "Reply with exactly: Claude API connected.";
@@ -47,6 +47,35 @@ export async function claudeHealthCheck(): Promise<HealthResult> {
       .trim();
 
     return { ok: true, provider, model: response.model, reply: reply || "(empty reply)" };
+  } catch (err) {
+    const { code, error } = describeClaudeError(err);
+    return { ok: false, provider, model, code, error };
+  }
+}
+
+/** One Claude call for /api/ask. Server only; the key never leaves the server. */
+export async function claudeGenerate(req: LlmRequest): Promise<LlmResult> {
+  const model = claudeModel();
+  const provider = "claude";
+  if (!hasClaudeKey()) {
+    return { ok: false, provider, model, code: "missing_key", error: "AI not connected yet." };
+  }
+  try {
+    const client = new Anthropic({ maxRetries: 1, timeout: req.timeoutMs ?? 20_000 });
+    const response = await client.messages.create({
+      model,
+      max_tokens: req.maxTokens,
+      system: req.system,
+      messages: [{ role: "user", content: req.user }],
+    });
+    if (response.stop_reason === "refusal") {
+      return { ok: false, provider, model, code: "refusal", error: "The model declined to answer." };
+    }
+    const text = response.content
+      .flatMap((block) => (block.type === "text" ? [block.text] : []))
+      .join("")
+      .trim();
+    return { ok: true, provider, model: response.model, text };
   } catch (err) {
     const { code, error } = describeClaudeError(err);
     return { ok: false, provider, model, code, error };
