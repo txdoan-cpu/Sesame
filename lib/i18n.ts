@@ -5,7 +5,7 @@ export type Lang = "en" | "vi";
 export const LANG_COOKIE = "lang";
 
 /** Namespaces shown to parents; these must exist in both en.json and vi.json. */
-export const PARENT_NAMESPACES = ["app", "health", "lang", "auth", "parent"] as const;
+export const PARENT_NAMESPACES = ["app", "health", "lang", "auth", "parent", "portal"] as const;
 type ParentMessages = Pick<typeof en, (typeof PARENT_NAMESPACES)[number]>;
 
 const viParent: ParentMessages = vi;

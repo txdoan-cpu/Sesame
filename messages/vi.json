@@ -73,5 +73,152 @@
       "intro": "Đây là 17 mục tiêu Toán mà học sinh lớp 8 ở Newfoundland và Labrador cần học, chia thành 4 mảng.",
       "back": "Về trang phụ huynh"
     }
+  },
+  "portal": {
+    "nav": {
+      "progress": "Tiến độ",
+      "rewards": "Phần thưởng",
+      "schedule": "Lịch học",
+      "account": "Tài khoản",
+      "back": "Tất cả các con"
+    },
+    "openChild": "Mở trang của {name}",
+    "private": "Con bạn đang giữ riêng mục này.",
+    "locked": "Luôn được chia sẻ",
+    "items": {
+      "attendance": "Các buổi học",
+      "safety_alerts": "Cảnh báo an toàn",
+      "reward_progress": "Tiến độ phần thưởng",
+      "outcome_status": "Mục tiêu Toán",
+      "scores": "Kết quả bài học",
+      "question_summaries": "Câu hỏi con đã hỏi trong bài",
+      "misconceptions": "Lỗi hay gặp cần luyện thêm"
+    },
+    "attendanceEmpty": "Chưa có buổi học nào. Việc theo dõi buổi học sẽ có ở bước sau của bản demo.",
+    "attendanceRow": "{date}: học thật {active} phút, ngồi không {idle} phút",
+    "engagement": {
+      "active": "học thật sự",
+      "passive": "học một phần",
+      "away": "phần lớn vắng mặt"
+    },
+    "safetyEmpty": "Không có cảnh báo an toàn.",
+    "safetyAlert": "{date}: con bạn đã nói điều có thể cần một cuộc trò chuyện nhẹ nhàng ({category}).",
+    "safetyCategory": {
+      "self_harm": "có thể đang nghĩ đến việc tự làm hại mình",
+      "bullying": "có thể đang bị bắt nạt",
+      "danger": "có thể đang gặp nguy hiểm",
+      "other_concern": "có thể cần được hỗ trợ"
+    },
+    "safetyAdvice": "Hãy trò chuyện với con thật bình tĩnh. Ở Canada, Kids Help Phone miễn phí và mở cửa cả ngày lẫn đêm: 1-800-668-6868.",
+    "safetyLearnerNote": "Cảnh báo an toàn luôn được chia sẻ với phụ huynh. Chúng không hiện trên trang này.",
+    "scoresEmpty": "Chưa có kết quả bài học.",
+    "scoreRow": "Bài kiểm tra cuối bài {outcome}: {score}%",
+    "masteredTag": "đạt mục tiêu",
+    "questionsEmpty": "Chưa có câu hỏi nào.",
+    "misconceptionsEmpty": "Chưa ghi nhận lỗi hay gặp.",
+    "status": {
+      "not_started": "Chưa bắt đầu",
+      "learning": "Đang học",
+      "nearly": "Gần đạt",
+      "achieved": "Đã đạt",
+      "retained": "Đã nhớ lâu"
+    },
+    "statusLegend": "Đang học: dưới 60%. Gần đạt: 60–79%. Đã đạt: từ 80%. Đã nhớ lâu: đạt lại sau ít nhất 2 tuần.",
+    "rewards": {
+      "title": "Mục tiêu có thưởng",
+      "intro": "Mục tiêu dựa trên việc học, không bao giờ dựa trên thời gian ngồi máy. Con có thể đồng ý hoặc đề nghị thay đổi.",
+      "empty": "Chưa có mục tiêu có thưởng.",
+      "newTitle": "Mục tiêu mới",
+      "outcomes": "Các mục tiêu cần đạt",
+      "minScore": "Điểm tối thiểu (%)",
+      "retentionDays": "Kiểm tra lại sau (ngày)",
+      "retentionHint": "Con phải đạt lại số điểm này sau chừng ấy ngày, để chứng tỏ con nhớ bài.",
+      "deadline": "Hạn chót",
+      "rewardText": "Phần thưởng",
+      "rewardHint": "Ví dụ: một cây gậy khúc côn cầu mới, hoặc một buổi đi xem phim.",
+      "value": "Giá trị bằng CAD (không bắt buộc)",
+      "create": "Tạo mục tiêu",
+      "created": "Đã tạo mục tiêu. Con bạn sẽ thấy nó.",
+      "progress": "Đã đạt {achieved}/{total} mục tiêu ({percent}%)",
+      "terms": "Đạt từ {score}%, kiểm tra lại sau {days} ngày, trước {deadline}.",
+      "coSet": "Con đã đồng ý",
+      "waiting": "Đang chờ con đồng ý",
+      "childNote": "Con đề nghị: {note}",
+      "statusLabel": {
+        "active": "Đang thực hiện",
+        "unlocked": "Đã mở khoá!",
+        "fulfilled": "Đã trao",
+        "expired": "Hết hạn"
+      },
+      "markFulfilled": "Đánh dấu đã trao",
+      "delete": "Xoá",
+      "feasibility": {
+        "on_track": "Đúng tiến độ.",
+        "at_risk": "Hơi gấp: mục tiêu này có thể khó đạt trước hạn chót.",
+        "unlikely": "Rất khó đạt trước hạn chót. Hãy cân nhắc lùi hạn hoặc bớt số mục tiêu."
+      },
+      "noPayments": "Bản demo này không xử lý thanh toán hay thẻ quà tặng."
+    },
+    "schedule": {
+      "title": "Lịch học hằng tuần",
+      "empty": "Chưa có giờ học nào.",
+      "weekday": "Thứ",
+      "start": "Giờ bắt đầu",
+      "duration": "Số phút",
+      "add": "Thêm giờ học",
+      "added": "Đã thêm giờ học.",
+      "remove": "Xoá",
+      "slot": "{day} lúc {time}, {minutes} phút",
+      "requests": "Yêu cầu đổi lịch của con",
+      "noRequests": "Không có yêu cầu.",
+      "request": "Xin học vào {day} lúc {time}, {minutes} phút",
+      "requestNew": "(giờ học mới)",
+      "requestNote": "Ghi chú: {note}",
+      "approve": "Đồng ý",
+      "decline": "Từ chối",
+      "requestStatus": {
+        "pending": "Đang chờ bạn",
+        "approved": "Đã đồng ý",
+        "declined": "Đã từ chối"
+      }
+    },
+    "days": [
+      "Chủ nhật",
+      "Thứ hai",
+      "Thứ ba",
+      "Thứ tư",
+      "Thứ năm",
+      "Thứ sáu",
+      "Thứ bảy"
+    ],
+    "account": {
+      "title": "Tài khoản",
+      "resetTitle": "Đặt lại mật khẩu cho con",
+      "resetIntro": "Con bạn đăng nhập bằng tên {username}. Hãy chọn mật khẩu mới và đưa cho con.",
+      "newPassword": "Mật khẩu mới",
+      "reset": "Đặt lại mật khẩu",
+      "resetDone": "Đã đổi mật khẩu."
+    },
+    "errors": {
+      "invalid_input": "Vui lòng kiểm tra lại thông tin.",
+      "past_deadline": "Hạn chót phải là một ngày trong tương lai.",
+      "not_linked": "Học sinh này không liên kết với tài khoản của bạn.",
+      "save_failed": "Không lưu được. Vui lòng thử lại.",
+      "unknown": "Có lỗi xảy ra."
+    },
+    "notifications": {
+      "title": "Thông báo",
+      "link": "Thông báo",
+      "unread": "{n} mới",
+      "empty": "Không có thông báo.",
+      "markRead": "Đánh dấu đã đọc",
+      "types": {
+        "safety": "Cảnh báo an toàn về {name}: {category}.",
+        "schedule_request": "{name} xin đổi một giờ học.",
+        "reward_accepted": "{name} đã đồng ý mục tiêu: {reward}.",
+        "reward_suggestion": "{name} đề nghị thay đổi mục tiêu \"{reward}\": {note}",
+        "other": "Cập nhật về {name}."
+      }
+    }
   }
 }

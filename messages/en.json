@@ -101,7 +101,38 @@
         "achieved": "Got it!",
         "retained": "Still got it!"
       },
-      "startLesson": "Start today's lesson"
+      "startLesson": "Start today's lesson",
+      "sharingLink": "What I share",
+      "parentViewLink": "What my parent sees",
+      "rewardsTitle": "Goals with my parent",
+      "rewardsEmpty": "No goals yet.",
+      "rewardLine": "Reach {outcomes} with {score}% or more, then again after {days} days, by {deadline}.",
+      "rewardPrize": "Reward: {reward}",
+      "accept": "I accept this goal",
+      "suggest": "Suggest a change",
+      "suggestLabel": "What would you change?",
+      "send": "Send",
+      "accepted": "You accepted this goal.",
+      "suggested": "Sent to your parent.",
+      "youSuggested": "You suggested: {note}",
+      "scheduleTitle": "My study times",
+      "scheduleEmpty": "No study times yet. Ask your parent to add some.",
+      "requestTitle": "Ask for a different time",
+      "requestFor": "Which time?",
+      "newTime": "A new time",
+      "note": "Why? (optional)",
+      "requestSend": "Send request",
+      "requestSent": "Sent! Your parent will decide.",
+      "requestsTitle": "My requests",
+      "errors": {
+        "invalid_input": "Please check the form.",
+        "save_failed": "Could not save. Please try again."
+      },
+      "requestStatus": {
+        "pending": "Waiting for your parent",
+        "approved": "Approved",
+        "declined": "Not this time"
+      }
     },
     "lesson": {
       "pageTitle": "Today's lesson",
@@ -185,6 +216,184 @@
         "noSpeech": "I did not hear anything. Try again, or type your question.",
         "safetyTitle": "Let's take a break",
         "safetyBack": "Back to my goals"
+      }
+    },
+    "sharing": {
+      "title": "What I share with my parent",
+      "intro": "You choose what your parent can see. Some things are always shared, to keep you safe and on track.",
+      "shared": "Shared",
+      "private": "Private",
+      "locked": "Always shared",
+      "turnOn": "Share it",
+      "turnOff": "Keep it private",
+      "items": {
+        "attendance": "When I study and how long I am active",
+        "safety_alerts": "Safety alerts",
+        "reward_progress": "Progress on goals with my parent",
+        "outcome_status": "My math goal progress",
+        "scores": "My lesson results",
+        "question_summaries": "Questions I ask in lessons",
+        "misconceptions": "Mistakes I often make"
+      },
+      "why": {
+        "attendance": "Your parent sets your study times, so they always see if you studied.",
+        "safety_alerts": "If something worries us, a grown-up needs to know so they can help.",
+        "reward_progress": "Your parent needs to know when you reach a goal you set together."
+      },
+      "preview": "See what my parent sees",
+      "back": "Back to my goals"
+    },
+    "parentView": {
+      "title": "What my parent sees",
+      "intro": "This is exactly what your parent sees about you.",
+      "back": "Back to my goals",
+      "change": "Change what I share"
+    }
+  },
+  "portal": {
+    "nav": {
+      "progress": "Progress",
+      "rewards": "Rewards",
+      "schedule": "Schedule",
+      "account": "Account",
+      "back": "All children"
+    },
+    "openChild": "Open {name}'s page",
+    "private": "Your child is keeping this private.",
+    "locked": "Always shared",
+    "items": {
+      "attendance": "Study sessions",
+      "safety_alerts": "Safety alerts",
+      "reward_progress": "Reward progress",
+      "outcome_status": "Math outcomes",
+      "scores": "Lesson results",
+      "question_summaries": "Questions asked in lessons",
+      "misconceptions": "Common mistakes to work on"
+    },
+    "attendanceEmpty": "No study sessions yet. Session tracking starts in a later step of the demo.",
+    "attendanceRow": "{date}: {active} min active, {idle} min idle",
+    "engagement": {
+      "active": "really studying",
+      "passive": "partly studying",
+      "away": "mostly away"
+    },
+    "safetyEmpty": "No safety alerts.",
+    "safetyAlert": "{date}: your child said something that may need a caring talk ({category}).",
+    "safetyCategory": {
+      "self_harm": "may be thinking about hurting themselves",
+      "bullying": "may be bullied",
+      "danger": "may be in danger",
+      "other_concern": "may need support"
+    },
+    "safetyAdvice": "Please talk with your child calmly. In Canada, Kids Help Phone is free and open day and night: 1-800-668-6868.",
+    "safetyLearnerNote": "Safety alerts are always shared with your parent. They are not shown on this page.",
+    "scoresEmpty": "No lesson results yet.",
+    "scoreRow": "{outcome} exit ticket: {score}%",
+    "masteredTag": "goal reached",
+    "questionsEmpty": "No questions yet.",
+    "misconceptionsEmpty": "No common mistakes recorded.",
+    "status": {
+      "not_started": "Not started",
+      "learning": "Learning",
+      "nearly": "Nearly there",
+      "achieved": "Achieved",
+      "retained": "Remembered"
+    },
+    "statusLegend": "Learning: under 60%. Nearly there: 60–79%. Achieved: 80% or more. Remembered: achieved again 2 or more weeks later.",
+    "rewards": {
+      "title": "Reward goals",
+      "intro": "Goals are about learning, never about time online. Your child can accept a goal or suggest a change.",
+      "empty": "No reward goals yet.",
+      "newTitle": "New goal",
+      "outcomes": "Outcomes to reach",
+      "minScore": "Minimum score (%)",
+      "retentionDays": "Check again after (days)",
+      "retentionHint": "Your child must reach the score again after this many days, to show they remember.",
+      "deadline": "Deadline",
+      "rewardText": "Reward",
+      "rewardHint": "For example: a new hockey stick, or a trip to the movies.",
+      "value": "Value in CAD (optional)",
+      "create": "Create goal",
+      "created": "Goal created. Your child will see it.",
+      "progress": "{achieved} of {total} outcomes achieved ({percent}%)",
+      "terms": "Score {score}% or more, check again after {days} days, by {deadline}.",
+      "coSet": "Accepted by your child",
+      "waiting": "Waiting for your child to accept",
+      "childNote": "Your child suggests: {note}",
+      "statusLabel": {
+        "active": "Active",
+        "unlocked": "Unlocked!",
+        "fulfilled": "Given",
+        "expired": "Expired"
+      },
+      "markFulfilled": "Mark as given",
+      "delete": "Delete",
+      "feasibility": {
+        "on_track": "On track.",
+        "at_risk": "Tight: this goal may be hard to reach by the deadline.",
+        "unlikely": "Very unlikely to be met by the deadline. Consider a later deadline or fewer outcomes."
+      },
+      "noPayments": "This demo does not handle payments or gift cards."
+    },
+    "schedule": {
+      "title": "Weekly study times",
+      "empty": "No study times yet.",
+      "weekday": "Day",
+      "start": "Start time",
+      "duration": "Minutes",
+      "add": "Add study time",
+      "added": "Study time added.",
+      "remove": "Remove",
+      "slot": "{day} at {time}, {minutes} min",
+      "requests": "Change requests from your child",
+      "noRequests": "No requests.",
+      "request": "Asks for {day} at {time}, {minutes} min",
+      "requestNew": "(a new time)",
+      "requestNote": "Note: {note}",
+      "approve": "Approve",
+      "decline": "Decline",
+      "requestStatus": {
+        "pending": "Waiting for you",
+        "approved": "Approved",
+        "declined": "Declined"
+      }
+    },
+    "days": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "account": {
+      "title": "Account",
+      "resetTitle": "Reset your child's password",
+      "resetIntro": "Your child logs in with the username {username}. Choose a new password and share it with them.",
+      "newPassword": "New password",
+      "reset": "Reset password",
+      "resetDone": "Password changed."
+    },
+    "errors": {
+      "invalid_input": "Please check the form.",
+      "past_deadline": "The deadline must be in the future.",
+      "not_linked": "This child is not linked to your account.",
+      "save_failed": "Could not save. Please try again.",
+      "unknown": "Something went wrong."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "link": "Notifications",
+      "unread": "{n} new",
+      "empty": "No notifications.",
+      "markRead": "Mark as read",
+      "types": {
+        "safety": "Safety alert about {name}: {category}.",
+        "schedule_request": "{name} asked to change a study time.",
+        "reward_accepted": "{name} accepted the goal: {reward}.",
+        "reward_suggestion": "{name} suggests a change to the goal \"{reward}\": {note}",
+        "other": "Update about {name}."
       }
     }
   }

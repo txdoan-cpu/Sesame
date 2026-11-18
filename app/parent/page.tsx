@@ -8,6 +8,7 @@ import { getLinkedChildren, requireRole } from "@/lib/auth/dal";
 import { getLang } from "@/lib/lang";
 import { parentMessages } from "@/lib/i18n";
 import en from "@/messages/en.json";
+import { getMyNotifications } from "@/lib/portal";
 import { createLearner } from "./actions";
 
 export const metadata: Metadata = { title: "Parent dashboard — Sesame" };
@@ -26,7 +27,8 @@ async function ParentDashboard() {
   const user = await requireRole("parent");
   const lang = await getLang();
   const t = parentMessages(lang);
-  const children = await getLinkedChildren();
+  const [children, notifications] = await Promise.all([getLinkedChildren(), getMyNotifications()]);
+  const unread = notifications.filter((n) => !n.read_at).length;
 
   return (
     <>
@@ -36,6 +38,18 @@ async function ParentDashboard() {
           <p className="text-lg">{t.parent.welcome.replace("{name}", user.displayName)}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/parent/notifications"
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg border-2 border-current px-4 font-medium"
+            data-testid="notifications-link"
+          >
+            {t.portal.notifications.link}
+            {unread > 0 && (
+              <span className="rounded-full bg-red-700 px-2 text-sm font-semibold text-white">
+                {t.portal.notifications.unread.replace("{n}", String(unread))}
+              </span>
+            )}
+          </Link>
           <LangToggle current={lang} labels={t.lang} />
           <LogoutButton label={t.auth.logout} />
         </div>
@@ -55,6 +69,12 @@ async function ParentDashboard() {
                 <p className="text-zinc-700 dark:text-zinc-300">
                   {t.parent.logsInAs}: <span className="font-mono">{child.username}</span>
                 </p>
+                <Link
+                  href={`/parent/child/${child.id}`}
+                  className="mt-2 inline-flex min-h-11 items-center rounded-lg bg-blue-700 px-4 font-semibold text-white"
+                >
+                  {t.portal.openChild.replace("{name}", child.displayName)}
+                </Link>
               </li>
             ))}
           </ul>

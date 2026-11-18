@@ -66,3 +66,13 @@ export async function getMyTargetOutcome(): Promise<string | null> {
   const parsed = z.object({ target_outcome: z.string().nullable() }).safeParse(data);
   return parsed.success ? parsed.data.target_outcome : null;
 }
+
+const MisconceptionRow = z.object({ code: z.string(), description: z.string(), description_vi: z.string() });
+export type MisconceptionInfo = z.infer<typeof MisconceptionRow>;
+
+/** All misconception descriptions (EN + VI), for showing codes in plain words. */
+export async function getMisconceptionInfo(): Promise<MisconceptionInfo[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("misconceptions").select("code, description, description_vi").order("code");
+  return z.array(MisconceptionRow).safeParse(data).data ?? [];
+}
