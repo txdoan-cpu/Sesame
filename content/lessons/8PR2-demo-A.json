@@ -1,0 +1,362 @@
+{
+  "id": "8PR2-demo-A",
+  "outcome_code": "8PR2",
+  "title": "Keep it balanced: solving equations",
+  "minutes": 15,
+  "diagnostic": [
+    {
+      "kind": "numeric",
+      "id": "d1",
+      "prompt": "Solve $x + 5 = 9$",
+      "equation": "x + 5 = 9",
+      "answer": 4,
+      "hints": ["What number plus 5 makes 9?"],
+      "correct_feedback": "Yes, x = 4."
+    },
+    {
+      "kind": "numeric",
+      "id": "d2",
+      "prompt": "Solve $3x = 12$",
+      "equation": "3x = 12",
+      "answer": 4,
+      "hints": ["3 times what number makes 12?"],
+      "correct_feedback": "Yes, x = 4."
+    },
+    {
+      "kind": "numeric",
+      "id": "d3",
+      "prompt": "Solve $2x + 1 = 7$",
+      "equation": "2x + 1 = 7",
+      "answer": 3,
+      "hints": ["Take away 1 from both sides first."],
+      "correct_feedback": "Yes, x = 3."
+    },
+    {
+      "kind": "numeric",
+      "id": "d4",
+      "prompt": "Solve $x/2 = 5$",
+      "equation": "x/2 = 5",
+      "answer": 10,
+      "hints": ["Half of what number is 5?"],
+      "correct_feedback": "Yes, x = 10."
+    }
+  ],
+  "slides": [
+    {
+      "no": 1,
+      "title": "Warm-up",
+      "body_md": "You already know how to do these.\n\n- $4x = 20$\n- $x + 7 = 12$",
+      "narration": "Welcome back! Let's start with two quick ones. You have solved equations like these before. Take your time, and type what x is for each one.",
+      "visual": { "type": "none" },
+      "indicators": ["PR2.3"],
+      "checkpoint": {
+        "items": [
+          {
+            "kind": "numeric",
+            "id": "s1a",
+            "prompt": "Solve $4x = 20$",
+            "equation": "4x = 20",
+            "answer": 5,
+            "hints": ["4 times what number makes 20?", "Divide both sides by 4.", "20 divided by 4 is 5."],
+            "correct_feedback": "Yes! x = 5. Four fives make twenty."
+          },
+          {
+            "kind": "numeric",
+            "id": "s1b",
+            "prompt": "Solve $x + 7 = 12$",
+            "equation": "x + 7 = 12",
+            "answer": 5,
+            "hints": ["What number plus 7 makes 12?", "Take away 7 from both sides.", "12 minus 7 is 5."],
+            "correct_feedback": "Yes! x = 5. Two for two!"
+          }
+        ]
+      }
+    },
+    {
+      "no": 2,
+      "title": "The equals sign means balanced",
+      "body_md": "**=** does not mean \"the answer is\".\n\n**=** means both sides weigh the same.\n\n- Do something to one side? Do the same to the other side.",
+      "narration": "Picture a balance scale. On one side we have x plus 2. On the other side we have 5. The scale is level, so both sides weigh the same. That is what the equals sign really means. If you change one side, you have to change the other side the same way. Then it stays balanced.",
+      "visual": { "type": "balance", "left": "x + 2", "right": "5" },
+      "indicators": ["PR2.1"],
+      "checkpoint": {
+        "items": [
+          {
+            "kind": "choice",
+            "id": "s2",
+            "prompt": "What happens if we add 2 to only one side?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The scale tips. It is not balanced any more.",
+                "correct": true,
+                "feedback": "Right! One side got heavier, so the scale tips."
+              },
+              {
+                "id": "b",
+                "text": "Nothing changes.",
+                "correct": false,
+                "misconception": "M1",
+                "feedback": "Not quite. Adding 2 makes that side heavier. Try again."
+              },
+              {
+                "id": "c",
+                "text": "The answer gets 2 bigger.",
+                "correct": false,
+                "misconception": "M5",
+                "feedback": "Not quite. Think of the scale, not an answer. What happens to the scale?"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "no": 3,
+      "title": "Worked example: skate rental",
+      "body_md": "Skates cost **\\$4**, plus **\\$3 for each hour**. You paid **\\$19**.\n\nLet **x** be the number of hours.",
+      "narration": "Picture your local rink here in St. John's. Skate rental is four dollars, plus three dollars for every hour. You paid nineteen dollars. How many hours did you skate? Let's turn that story into a balance. On one side: three x plus four. On the other: nineteen. First, take away four from both sides. That leaves three x equals fifteen. Then divide both sides by three. So x is five. You skated for five hours. Let's check: three times five is fifteen, plus four is nineteen. It works!",
+      "visual": {
+        "type": "steps",
+        "lines": ["3x + 4 = 19", "3x + 4 - 4 = 19 - 4", "3x = 15", "3x / 3 = 15 / 3", "x = 5"],
+        "solution": 5,
+        "check": "3(5) + 4 = 19"
+      },
+      "indicators": ["PR2.3", "PR2.6", "PR2.2"]
+    },
+    {
+      "no": 4,
+      "title": "Your turn to finish it",
+      "body_md": "Here is $5x - 7 = 18$.\n\nThe first steps are done. You write the last one.",
+      "narration": "Now you help. This one is five x minus seven equals eighteen. We added seven to both sides, so five x equals twenty-five. What is the last step? What does x equal?",
+      "visual": {
+        "type": "steps",
+        "lines": ["5x - 7 = 18", "5x - 7 + 7 = 18 + 7", "5x = 25", "x = 5"],
+        "solution": 5,
+        "hidden_line": 3
+      },
+      "indicators": ["PR2.3"],
+      "checkpoint": {
+        "items": [
+          {
+            "kind": "numeric",
+            "id": "s4",
+            "prompt": "Fill in the last step: $x = ?$",
+            "equation": "5x - 7 = 18",
+            "answer": 5,
+            "hints": [
+              "We have 5x = 25. What do we do to both sides to get x alone?",
+              "Divide both sides by 5.",
+              "25 divided by 5 is 5."
+            ],
+            "correct_feedback": "Yes! x = 5. You divided both sides by 5."
+          }
+        ]
+      }
+    },
+    {
+      "no": 5,
+      "title": "Algebra tiles: 2(x + 3) = 14",
+      "body_md": "$2(x + 3)$ means **2 groups** of $x + 3$.\n\n- Each group has one x-tile and three 1-tiles.\n- The other side has fourteen 1-tiles.",
+      "narration": "Let's use algebra tiles. Two times the bracket x plus three means two groups. Each group has one long x tile and three small one tiles. On the other side there are fourteen one tiles. Count all the small tiles on the left. That tells us what two x plus what number equals fourteen.",
+      "visual": { "type": "tiles", "groups": 2, "units_per_group": 3, "right_units": 14 },
+      "indicators": ["PR2.1", "PR2.4"],
+      "checkpoint": {
+        "items": [
+          {
+            "kind": "numeric",
+            "id": "s5",
+            "prompt": "How many 1-tiles are on the left side?",
+            "expression": "2 * 3",
+            "answer": 6,
+            "hints": ["Count the small squares in one group first.", "Each group has 3. There are 2 groups.", "2 groups of 3 is 6."],
+            "correct_feedback": "Yes, 6! So 2(x + 3) = 14 is the same as 2x + 6 = 14. Then 2x = 8, and x = 4."
+          }
+        ]
+      }
+    },
+    {
+      "no": 6,
+      "title": "Who's right?",
+      "body_md": "Maya and Liam both solved $2(x + 3) = 14$.\n\nThey got different answers. Only one is right.",
+      "narration": "Maya and Liam solved the same equation, two times the bracket x plus three equals fourteen. Maya got four. Liam got five and a half. Look closely at their first line. Who is right, and why?",
+      "visual": {
+        "type": "compare",
+        "equation": "2(x + 3) = 14",
+        "people": [
+          { "name": "Maya", "lines": ["2x + 6 = 14", "2x = 8", "x = 4"], "answer": 4 },
+          { "name": "Liam", "lines": ["2x + 3 = 14", "2x = 11", "x = 5.5"], "answer": 5.5 }
+        ]
+      },
+      "indicators": ["PR2.4", "PR2.5"],
+      "checkpoint": {
+        "items": [
+          {
+            "kind": "choice",
+            "id": "s6",
+            "prompt": "Who is right, and why?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Maya. The 2 multiplies the x and the 3.",
+                "correct": true,
+                "feedback": "Yes! 2 groups of (x + 3) is 2x + 6. Liam forgot to multiply the 3."
+              },
+              {
+                "id": "b",
+                "text": "Liam. You only multiply the x.",
+                "correct": false,
+                "misconception": "M2",
+                "feedback": "Look at the tiles again. There are 2 groups, so there are 2 sets of three 1-tiles."
+              },
+              {
+                "id": "c",
+                "text": "Both. They both got an answer.",
+                "correct": false,
+                "misconception": "M5",
+                "feedback": "Getting an answer is not enough. Put each answer back in. Does it make 14?"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "no": 7,
+      "title": "Watch the signs",
+      "body_md": "Negative numbers need extra care.\n\nAlways check your answer by putting it back in.",
+      "narration": "This one has negative numbers. Negative three x plus five equals negative ten. Take away five from both sides. Negative ten minus five is negative fifteen. Then divide both sides by negative three. A negative divided by a negative is positive, so x is five. Now let's check it. Put five back in for x.",
+      "visual": {
+        "type": "steps",
+        "lines": ["-3x + 5 = -10", "-3x + 5 - 5 = -10 - 5", "-3x = -15", "-3x / -3 = -15 / -3", "x = 5"],
+        "solution": 5
+      },
+      "indicators": ["PR2.3", "PR2.2"],
+      "checkpoint": {
+        "items": [
+          {
+            "kind": "numeric",
+            "id": "s7",
+            "prompt": "Check it: what is $-3(5) + 5$?",
+            "expression": "-3(5) + 5",
+            "answer": -10,
+            "hints": ["First work out -3 times 5.", "-3 times 5 is -15. Now add 5.", "-15 + 5 = -10."],
+            "correct_feedback": "Yes, -10! That matches the right side, so x = 5 is correct."
+          }
+        ]
+      }
+    },
+    {
+      "no": 8,
+      "title": "Practice",
+      "body_md": "Three to try. Use a hint if you need one.\n\n- $2x + 9 = 1$\n- $x/3 + 4 = 6$\n- $4(x - 2) = 12$",
+      "narration": "Now you try three on your own. If you get stuck, ask for a hint. Each hint gives you a little more help. There is no rush.",
+      "visual": { "type": "none" },
+      "indicators": ["PR2.3", "PR2.4"],
+      "checkpoint": {
+        "items": [
+          {
+            "kind": "numeric",
+            "id": "s8a",
+            "prompt": "Solve $2x + 9 = 1$",
+            "equation": "2x + 9 = 1",
+            "answer": -4,
+            "hints": [
+              "Get 2x alone first. What do you take away from both sides?",
+              "Take away 9 from both sides: 2x = 1 - 9 = -8.",
+              "Now divide both sides by 2. -8 divided by 2 is -4."
+            ],
+            "correct_feedback": "Yes! x = -4. Check: 2(-4) + 9 = 1."
+          },
+          {
+            "kind": "numeric",
+            "id": "s8b",
+            "prompt": "Solve $x/3 + 4 = 6$",
+            "equation": "x/3 + 4 = 6",
+            "answer": 6,
+            "hints": [
+              "Take away 4 from both sides first.",
+              "Now you have x/3 = 2. What undoes dividing by 3?",
+              "Multiply both sides by 3. 2 times 3 is 6."
+            ],
+            "correct_feedback": "Yes! x = 6. Check: 6/3 + 4 = 6."
+          },
+          {
+            "kind": "numeric",
+            "id": "s8c",
+            "prompt": "Solve $4(x - 2) = 12$",
+            "equation": "4(x - 2) = 12",
+            "answer": 5,
+            "hints": [
+              "The 4 multiplies both the x and the 2.",
+              "4(x - 2) = 4x - 8. So 4x - 8 = 12. Add 8 to both sides.",
+              "4x = 20. Divide both sides by 4."
+            ],
+            "correct_feedback": "Yes! x = 5. Check: 4(5 - 2) = 12."
+          }
+        ]
+      }
+    },
+    {
+      "no": 9,
+      "title": "Show what you know",
+      "body_md": "Four quick questions.\n\n- Three are tap to answer.\n- One is in your own words.\n\nThis is not a test for marks. It helps us plan your next lesson.",
+      "narration": "Great work today. Last part. Four quick questions. Three of them, you just tap an answer. For the last one, explain in your own words. This is not for marks. It just helps plan your next lesson.",
+      "visual": { "type": "none" },
+      "indicators": []
+    }
+  ],
+  "exit_ticket": {
+    "mastery_threshold": 0.8,
+    "choice": [
+      {
+        "id": "e1",
+        "prompt": "Solve $4x + 3 = 23$",
+        "equation": "4x + 3 = 23",
+        "indicator": "PR2.3",
+        "skill": "8PR2.two_step",
+        "options": [
+          { "id": "a", "text": "x = 5", "value": 5, "correct": true },
+          { "id": "b", "text": "x = 6.5", "value": 6.5, "correct": false, "misconception": "M3" },
+          { "id": "c", "text": "x = 2.75", "value": 2.75, "correct": false, "misconception": "M4" },
+          { "id": "d", "text": "x = 5.75", "value": 5.75, "correct": false, "misconception": "M1" }
+        ]
+      },
+      {
+        "id": "e2",
+        "prompt": "Solve $2(x + 5) = 16$",
+        "equation": "2(x + 5) = 16",
+        "indicator": "PR2.4",
+        "skill": "8PR2.distributive",
+        "options": [
+          { "id": "a", "text": "x = 5.5", "value": 5.5, "correct": false, "misconception": "M2" },
+          { "id": "b", "text": "x = 3", "value": 3, "correct": true },
+          { "id": "c", "text": "x = 13", "value": 13, "correct": false, "misconception": "M3" }
+        ]
+      },
+      {
+        "id": "e3",
+        "prompt": "Ava is solving $3x + 5 = 20$. She took away 5 from the left side only. What should she do?",
+        "indicator": "PR2.1",
+        "skill": "8PR2.two_step",
+        "options": [
+          { "id": "a", "text": "Nothing. The right side is the answer.", "correct": false, "misconception": "M5" },
+          { "id": "b", "text": "Divide only the right side by 3.", "correct": false, "misconception": "M4" },
+          { "id": "c", "text": "Take away 5 from the right side too, to keep it balanced.", "correct": true },
+          { "id": "d", "text": "Add 5 to the right side.", "correct": false, "misconception": "M3" }
+        ]
+      }
+    ],
+    "explain": {
+      "prompt": "In your own words: what is the most important rule when you solve an equation?",
+      "keywords": [
+        "balanc",
+        "both sides",
+        "each side",
+        "same (thing|to|on) (to |on )?(both|each|the other)",
+        "other side",
+        "equal on both"
+      ]
+    }
+  }
+}
