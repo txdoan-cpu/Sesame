@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { LessonView } from "@/lib/lesson/view";
 import { learnerMessages } from "@/lib/i18n";
+import Link from "next/link";
+import { AskPanel } from "./AskPanel";
 import { Checkpoint, NumericCheck, type ItemOutcome } from "./Checkpoint";
 import { ExitTicket } from "./ExitTicket";
 import { Visual } from "./Visuals";
@@ -12,11 +14,14 @@ const t = learnerMessages.lesson;
 
 type Phase = "start" | "diagnostic" | "slides" | "exit";
 
-export function LessonPlayer({ lesson, needsDiagnostic, minutes }: { lesson: LessonView; needsDiagnostic: boolean; minutes: number }) {
+type PlayerProps = { lesson: LessonView; needsDiagnostic: boolean; minutes: number; aiReady: boolean };
+
+export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: PlayerProps) {
   const [phase, setPhase] = useState<Phase>("start");
   const [index, setIndex] = useState(0);
   const [diagIndex, setDiagIndex] = useState(0);
   const [outcomes, setOutcomes] = useState<Record<string, ItemOutcome>>({});
+  const [safetyMessage, setSafetyMessage] = useState<string | null>(null);
   const narration = useNarration();
   const headingRef = useRef<HTMLHeadingElement>(null);
 
@@ -27,13 +32,26 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes }: { lesson: Les
   // Narrate each slide as it opens (the Start button was the user gesture).
   const { speak, stop } = narration;
   useEffect(() => {
-    if (phase !== "slides") return;
+    if (phase !== "slides" || safetyMessage) return;
     speak(lesson.slides[index].narration);
     headingRef.current?.focus();
     return () => stop();
-  }, [phase, index, lesson.slides, speak, stop]);
+  }, [phase, index, lesson.slides, speak, stop, safetyMessage]);
 
   const recordOutcome = (o: ItemOutcome) => setOutcomes((prev) => ({ ...prev, [o.id]: o }));
+
+  // Safety: do not continue the lesson (CLAUDE.md §7.2).
+  if (safetyMessage) {
+    return (
+      <section role="alert" className="flex flex-col gap-4 rounded-xl border-2 border-blue-700 p-6" data-testid="safety-message">
+        <h1 className="text-3xl font-bold">{t.ask.safetyTitle}</h1>
+        <p className="text-xl">{safetyMessage}</p>
+        <Link href="/learner" className="inline-flex min-h-11 items-center self-start rounded-lg bg-blue-700 px-5 font-semibold text-white">
+          {t.ask.safetyBack}
+        </Link>
+      </section>
+    );
+  }
 
   if (phase === "start") {
     return (
@@ -112,6 +130,20 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes }: { lesson: Les
         </div>
         <p data-testid="narration-text">{slide.narration}</p>
       </aside>
+
+      <AskPanel
+        lessonId={lesson.id}
+        slideNo={slide.no}
+        aiReady={aiReady}
+        onPause={stop}
+        onResume={() => speak(slide.narration)}
+        speak={speak}
+        onSafety={(message) => {
+          stop();
+          setSafetyMessage(message);
+          speak(message);
+        }}
+      />
 
       {slide.checkpoint && <Checkpoint items={slide.checkpoint} done={outcomes} onItemDone={recordOutcome} />}
 

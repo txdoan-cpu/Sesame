@@ -7,6 +7,7 @@ import { requireRole } from "@/lib/auth/dal";
 import { getMyTargetOutcome } from "@/lib/curriculum";
 import { learnerMessages } from "@/lib/i18n";
 import { needsDiagnostic } from "@/lib/learner-profile";
+import { llmConfigured } from "@/lib/llm";
 import { getLessonForOutcome } from "@/lib/lesson/registry";
 import { toLessonView } from "@/lib/lesson/view";
 import { createClient } from "@/lib/supabase/server";
@@ -53,5 +54,7 @@ async function Lesson() {
   const confidence = z.object({ confidence: z.coerce.number() }).safeParse(data);
   const diagnostic = needsDiagnostic({ confidence_of_estimate: confidence.success ? confidence.data.confidence : 0 });
 
-  return <LessonPlayer lesson={toLessonView(lesson)} needsDiagnostic={diagnostic} minutes={lesson.minutes} />;
+  return (
+    <LessonPlayer lesson={toLessonView(lesson)} needsDiagnostic={diagnostic} minutes={lesson.minutes} aiReady={llmConfigured()} />
+  );
 }

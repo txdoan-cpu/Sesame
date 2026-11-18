@@ -4,6 +4,8 @@ import { useId, useState } from "react";
 import { answerMatches, parseNumericAnswer } from "@/lib/math/answer";
 import type { ChoiceItemView, CheckItemView, NumericItemView } from "@/lib/lesson/view";
 import { learnerMessages } from "@/lib/i18n";
+import { MicIcon } from "./AskPanel";
+import { useSpeechRecognition } from "./useSpeechRecognition";
 
 const t = learnerMessages.lesson.check;
 
@@ -50,8 +52,23 @@ export function NumericCheck({
   const finished = Boolean(done);
   const outOfHints = hintsShown >= item.hints.length;
 
+  const mic = useSpeechRecognition();
+
   function check(e: React.FormEvent) {
     e.preventDefault();
+    submit(value);
+  }
+
+  /** Spoken answers ("minus four", "x equals 5") fill the box and are checked straight away. */
+  function listen() {
+    if (mic.listening) return mic.stop();
+    mic.start((text) => {
+      setValue(text);
+      submit(text);
+    });
+  }
+
+  function submit(value: string) {
     if (finished) return;
     if (parseNumericAnswer(value) === null) {
       setMessage(t.notANumber);
@@ -91,6 +108,16 @@ export function NumericCheck({
         <button type="submit" disabled={finished} className="min-h-11 rounded-lg bg-blue-700 px-4 font-semibold text-white disabled:opacity-60">
           {t.submit}
         </button>
+        {mic.supported && !finished && (
+          <button
+            type="button"
+            onClick={listen}
+            aria-pressed={mic.listening}
+            className="flex min-h-11 items-center gap-2 rounded-lg border-2 border-blue-700 px-4 font-medium"
+          >
+            <MicIcon /> {mic.listening ? t.listening : t.speak}
+          </button>
+        )}
         {!finished && !outOfHints && (
           <button
             type="button"

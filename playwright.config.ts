@@ -19,6 +19,8 @@ export default defineConfig({
     command: `npm run start -- -p ${PORT}`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
+    // Deterministic answers in tests; real providers are checked by `npm run eval:ask`.
+    env: { LLM_PROVIDER: "mock" },
     timeout: 120_000,
   },
 });
