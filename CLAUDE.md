@@ -189,7 +189,7 @@ instead of data. The learner sees exactly what the parent sees on a "What my par
 | 1 Accounts | Parent sign-up/login; parent creates learner account (username + password); family link; RLS | E2E test: learner sees only own data; parent sees only linked child |
 | 2 Curriculum data | Migrations + seed from Appendix A: 17 outcomes (4 strands), 8PR2 indicators PR2.1–PR2.6, misconceptions M1–M5, sample profile demo-A (§9) | Outcome board renders grouped by strand |
 | 3 Lesson player | Write and load `content/lessons/8PR2-demo-A.json` from Appendix B (9 slides), narration, checkpoints, exit ticket, save results | Finishing the lesson updates outcome_status and mastery (test) |
-| 4 Voice Q&A | Mic button, `/api/ask`, spoken answer, resume, question tagging, math check, safety | 9/10 scripted test questions answered in slide context; 0 math errors; safety test passes |
+| 4 Voice Q&A | Mic button, `/api/ask`, spoken answer, resume, question tagging, math check, safety, voice answers for lesson check-ins (spoken numbers via SpeechRecognition) | 9/10 scripted test questions answered in slide context; 0 math errors; safety test passes |
 | 5 Parent portal | Dashboard, reward rules, schedule, learner sharing settings, "What my parent sees", parent resets a linked child's password (learners have no email) | Sharing tests pass for every item in §7.3 |
 | 6 Engagement & notifications | Sessions, idle detection, alerts, weekly summary, reward evaluation | Demo scenarios B (reward) and C (idle) run end to end |
 | 7 Polish | Responsive check on phone/tablet/desktop, demo accounts, demo script in `DEMO.md` | All demo targets in the proposal's roadmap table met |
