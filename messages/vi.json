@@ -66,6 +66,12 @@
     "usernameHint": "3–20 ký tự: chữ thường, số hoặc dấu _",
     "childPassword": "Mật khẩu cho con",
     "addChildButton": "Tạo tài khoản học sinh",
-    "childCreated": "Đã tạo tài khoản học sinh."
+    "childCreated": "Đã tạo tài khoản học sinh.",
+    "outcomesLink": "Xem các mục tiêu Toán lớp 8",
+    "outcomes": {
+      "title": "Mục tiêu Toán lớp 8",
+      "intro": "Đây là 17 mục tiêu Toán mà học sinh lớp 8 ở Newfoundland và Labrador cần học, chia thành 4 mảng.",
+      "back": "Về trang phụ huynh"
+    }
   }
 }

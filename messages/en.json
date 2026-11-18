@@ -66,7 +66,13 @@
     "usernameHint": "3–20 characters: lowercase letters, numbers or _",
     "childPassword": "Password for your child",
     "addChildButton": "Create learner account",
-    "childCreated": "Learner account created."
+    "childCreated": "Learner account created.",
+    "outcomesLink": "See the Grade 8 math outcomes",
+    "outcomes": {
+      "title": "Grade 8 math outcomes",
+      "intro": "These are the 17 things Grade 8 students in Newfoundland and Labrador learn in math, grouped into 4 strands.",
+      "back": "Back to dashboard"
+    }
   },
   "learner": {
     "login": {
@@ -84,8 +90,17 @@
     },
     "home": {
       "greeting": "Hi, {name}!",
-      "intro": "Your lessons will show up here soon.",
-      "logout": "Log out"
+      "intro": "Here are your Grade 8 math goals. Your next lesson is marked in blue.",
+      "logout": "Log out",
+      "boardTitle": "My math goals",
+      "nextLesson": "Next lesson",
+      "status": {
+        "not_started": "Not started",
+        "learning": "Learning",
+        "nearly": "Nearly there",
+        "achieved": "Got it!",
+        "retained": "Still got it!"
+      }
     }
   }
 }

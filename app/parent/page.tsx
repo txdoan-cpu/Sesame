@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { AuthForm } from "@/app/_components/AuthForm";
 import { LangToggle } from "@/app/_components/LangToggle";
@@ -58,6 +59,9 @@ async function ParentDashboard() {
             ))}
           </ul>
         )}
+        <Link href="/parent/outcomes" className="inline-flex min-h-11 items-center self-start font-medium underline">
+          {t.parent.outcomesLink}
+        </Link>
       </section>
 
       <section
