@@ -1,4 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
+import { loadEnvConfig } from "@next/env";
+
+// Tests that talk to Supabase directly read the same .env.local as the app.
+loadEnvConfig(process.cwd());
 
 const PORT = 3100;
 
