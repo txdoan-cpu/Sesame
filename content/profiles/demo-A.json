@@ -1,0 +1,15 @@
+{
+  "learner_id": "demo-A",
+  "grade": 8,
+  "school_context": "St. John's, NL (English program)",
+  "target_outcome": "8PR2",
+  "mastery": { "8PR2.one_step": 0.85, "8PR2.two_step": 0.45, "8PR2.distributive": 0.2, "8N7.integers": 0.7 },
+  "misconceptions": ["M2", "M3"],
+  "affect": { "math_anxiety": "moderate", "confidence_self_report": 2 },
+  "reading_level": "grade 6",
+  "language": { "primary": "English", "ell": false },
+  "accessibility": [],
+  "interests": ["hockey", "video games"],
+  "evidence": ["diagnostic_quiz_2026-10-15", "homework_set_12"],
+  "confidence_of_estimate": 0.7
+}
