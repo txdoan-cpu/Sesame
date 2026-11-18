@@ -7,6 +7,8 @@ import { OutcomeBoard } from "@/app/_components/OutcomeBoard";
 import { requireRole } from "@/lib/auth/dal";
 import { getCurriculum, getMyOutcomeStatus, getMyTargetOutcome } from "@/lib/curriculum";
 import { learnerMessages } from "@/lib/i18n";
+import { getChangeRequests, getRewardRules, getSchedule } from "@/lib/portal";
+import { FamilyPlans } from "./FamilyPlans";
 import en from "@/messages/en.json";
 
 export const metadata: Metadata = { title: "My lessons — Sesame" };
@@ -25,10 +27,13 @@ export default function LearnerPage() {
 
 async function LearnerHome() {
   const user = await requireRole("learner");
-  const [curriculum, status, target] = await Promise.all([
+  const [curriculum, status, target, rules, slots, requests] = await Promise.all([
     getCurriculum(),
     getMyOutcomeStatus(),
     getMyTargetOutcome(),
+    getRewardRules(user.id),
+    getSchedule(user.id),
+    getChangeRequests(user.id),
   ]);
 
   return (
@@ -46,6 +51,16 @@ async function LearnerHome() {
           {t.startLesson}
         </Link>
       )}
+      <nav aria-label={t.parentViewLink} className="flex flex-wrap gap-4">
+        <Link href="/learner/sharing" className="inline-flex min-h-11 items-center font-medium underline">
+          {t.sharingLink}
+        </Link>
+        <Link href="/learner/parent-view" className="inline-flex min-h-11 items-center font-medium underline">
+          {t.parentViewLink}
+        </Link>
+      </nav>
+
+      <FamilyPlans rules={rules} slots={slots} requests={requests} />
 
       <section aria-labelledby="board-title" className="flex flex-col gap-4">
         <h2 id="board-title" className="text-2xl font-semibold">
