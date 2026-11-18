@@ -1,0 +1,22 @@
+{
+  "app": {
+    "name": "Sesame",
+    "tagline": "AI Instructor demo — Grade 8 Math, St. John's, NL",
+    "demoNotice": "Demo only. All learner data is made up.",
+    "healthLink": "Check the Claude API connection"
+  },
+  "health": {
+    "title": "System health",
+    "intro": "This page checks that the server can talk to Claude.",
+    "checking": "Checking…",
+    "connected": "Connected",
+    "notConnected": "Not connected",
+    "missingKeyTitle": "API key not set yet",
+    "provider": "Provider",
+    "model": "Model",
+    "reply": "Reply",
+    "error": "What happened",
+    "retry": "Check again",
+    "back": "Back to home"
+  }
+}
