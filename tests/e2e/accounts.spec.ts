@@ -59,7 +59,7 @@ test.describe("accounts", () => {
 
     await expect(page.getByText("Learner account created.")).toBeVisible();
     const list = page.getByTestId("children-list");
-    await expect(list.getByText(childA.name)).toBeVisible();
+    await expect(list.getByText(childA.name, { exact: true })).toBeVisible();
     await expect(list.getByText(childA.username)).toBeVisible();
     await expect(list.getByRole("listitem")).toHaveCount(1);
 
@@ -98,7 +98,7 @@ test.describe("accounts", () => {
   test("another parent sees only their own linked child", async ({ page }) => {
     await loginParent(page, familyB!.parent.email);
     const list = page.getByTestId("children-list");
-    await expect(list.getByText(familyB!.learner.name)).toBeVisible();
+    await expect(list.getByText(familyB!.learner.name, { exact: true })).toBeVisible();
     await expect(list.getByRole("listitem")).toHaveCount(1);
     await expect(page.getByText(childA.name)).toHaveCount(0);
 
