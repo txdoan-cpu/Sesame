@@ -100,6 +100,69 @@
         "nearly": "Nearly there",
         "achieved": "Got it!",
         "retained": "Still got it!"
+      },
+      "startLesson": "Start today's lesson"
+    },
+    "lesson": {
+      "pageTitle": "Today's lesson",
+      "minutes": "About {n} minutes",
+      "start": "Start lesson",
+      "startHint": "Turn on your sound. The words are always on the screen too.",
+      "noLesson": "There is no lesson ready for you yet.",
+      "backHome": "Back to my goals",
+      "slideOf": "Slide {n} of {total}",
+      "back": "Back",
+      "next": "Next",
+      "toExit": "Go to the last questions",
+      "narration": {
+        "label": "Teacher says",
+        "play": "Play",
+        "replay": "Play again",
+        "stop": "Stop",
+        "unsupported": "Sound does not work on this device. Read the words below instead."
+      },
+      "check": {
+        "title": "Check-in",
+        "answerLabel": "Your answer",
+        "submit": "Check",
+        "hint": "Get a hint",
+        "hintLabel": "Hint {n}",
+        "tryAgain": "Not yet. Try again.",
+        "showAnswer": "Show me the answer",
+        "answerWas": "The answer is {answer}.",
+        "needAnswer": "Finish the check-in to go on.",
+        "notANumber": "Please type a number, like 5 or -4."
+      },
+      "diagnostic": {
+        "title": "A few quick questions first",
+        "intro": "These help us know where to start. Just do your best.",
+        "next": "Next question",
+        "done": "Start the lesson"
+      },
+      "exit": {
+        "title": "Show what you know",
+        "explainLabel": "Type your answer",
+        "submit": "Finish lesson",
+        "needAll": "Please answer all four questions.",
+        "saving": "Saving…",
+        "error": "We could not save your answers. Please try again."
+      },
+      "results": {
+        "title": "Lesson done!",
+        "score": "You got {correct} out of {total}.",
+        "mastered": "Amazing! You have got this goal.",
+        "notYet": "Good effort! We will practise more next time.",
+        "explainedYes": "You explained the balance rule. Great!",
+        "explainedNo": "Next time, try to say what happens to both sides.",
+        "status": "Goal status",
+        "tipsTitle": "Things to remember"
+      },
+      "tips": {
+        "M1": "Whatever you do to one side, do to the other side too.",
+        "M2": "The number outside the brackets multiplies everything inside.",
+        "M3": "Watch the signs when you move negative numbers.",
+        "M4": "Undo the adding or taking away first. Then divide.",
+        "M5": "= means both sides balance. It does not mean \"the answer is\"."
       }
     }
   }

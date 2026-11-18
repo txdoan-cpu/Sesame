@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
+import { getLessonForOutcome } from "@/lib/lesson/registry";
 import { LogoutButton } from "@/app/_components/LogoutButton";
 import { OutcomeBoard } from "@/app/_components/OutcomeBoard";
 import { requireRole } from "@/lib/auth/dal";
@@ -36,6 +38,14 @@ async function LearnerHome() {
         <LogoutButton label={t.logout} />
       </header>
       <p className="text-lg">{t.intro}</p>
+      {target && getLessonForOutcome(target) && (
+        <Link
+          href="/learner/lesson"
+          className="inline-flex min-h-11 items-center self-start rounded-lg bg-blue-700 px-6 text-lg font-semibold text-white"
+        >
+          {t.startLesson}
+        </Link>
+      )}
 
       <section aria-labelledby="board-title" className="flex flex-col gap-4">
         <h2 id="board-title" className="text-2xl font-semibold">
