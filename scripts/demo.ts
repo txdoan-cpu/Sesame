@@ -196,10 +196,68 @@ async function slotNow() {
   console.log(`Added a study slot today at ${format(start, "HH:mm")} St. John's time (60 min). Start the lesson now for scenario C.`);
 }
 
+/**
+ * A separate family for the outcome-board check with 5 testers (DEMO.md §9), so testers
+ * never disturb the main demo. Sam has goals in every state. Safe to run again: it resets.
+ */
+async function testers() {
+  const TESTER_PARENT = { email: "tester.parent@example.com", displayName: "Tester" };
+  const TESTER_LEARNER = { username: "tester_sam", displayName: "Sam" };
+  const fromEnv = process.env.TESTER_PASSWORD?.trim();
+  const password = fromEnv || `test-${randomBytes(6).toString("base64url")}`;
+  if (password.length < 8) throw new Error("TESTER_PASSWORD must be at least 8 characters.");
+
+  const profile = LearnerProfileSchema.parse(JSON.parse(readFileSync(new URL("../content/profiles/demo-A.json", import.meta.url), "utf8")));
+  const parentId = await upsertUser(TESTER_PARENT.email, TESTER_PARENT.displayName, password);
+  const learnerId = await upsertUser(`${TESTER_LEARNER.username}@learners.sesame.invalid`, TESTER_LEARNER.displayName, password, {
+    role: "learner",
+    username: TESTER_LEARNER.username,
+  });
+
+  for (const table of ["sessions", "assessments", "questions", "safety_reviews", "reward_rules", "schedule_change_requests", "schedules", "outcome_status"]) {
+    must(await admin.from(table).delete().eq("learner_id", learnerId), `clear ${table}`);
+  }
+  must(await admin.from("notifications").delete().in("recipient_id", [parentId, learnerId]), "clear notifications");
+  for (const s of SHARING_ITEMS.filter((s) => !s.locked)) {
+    must(await admin.from("sharing_settings").update({ shared: s.defaultShared }).eq("learner_id", learnerId).eq("item", s.item), "reset sharing");
+  }
+  must(
+    await admin.from("family_links").upsert({ parent_id: parentId, learner_id: learnerId, relationship: "parent" }, { onConflict: "parent_id,learner_id" }),
+    "link",
+  );
+  must(await admin.from("learner_profiles").upsert(toLearnerProfileRow(profile, learnerId)), "profile");
+
+  const daysAgo = (d: number) => new Date(Date.now() - d * DAY).toISOString();
+  must(
+    await admin.from("outcome_status").insert([
+      { learner_id: learnerId, outcome_code: "8N1", status: "achieved", mastery: 0.9, achieved_at: daysAgo(20) },
+      { learner_id: learnerId, outcome_code: "8PR2", status: "achieved", mastery: 1, achieved_at: daysAgo(3) },
+      { learner_id: learnerId, outcome_code: "8N7", status: "nearly", mastery: 0.7 },
+      { learner_id: learnerId, outcome_code: "8N3", status: "learning", mastery: 0.4 },
+    ]),
+    "outcome status",
+  );
+  must(
+    await admin.from("assessments").insert([
+      { learner_id: learnerId, outcome_code: "8N1", lesson_id: null, kind: "exit", score: 0.9, item_results: { mastered: true }, taken_at: daysAgo(20) },
+      { learner_id: learnerId, outcome_code: "8PR2", lesson_id: "8PR2-demo-A", kind: "exit", score: 1, item_results: { mastered: true }, taken_at: daysAgo(3) },
+    ]),
+    "results",
+  );
+  must(await admin.from("schedules").insert({ learner_id: learnerId, weekday: 1, start_time: "19:00", duration_min: 30 }), "schedule");
+
+  console.log("Tester family ready (synthetic data). Send testers the link and these details:");
+  console.log(`  Log in (Parents box): ${TESTER_PARENT.email}`);
+  console.log(
+    fromEnv ? "  Password            : the TESTER_PASSWORD from .env.local" : `  Password            : ${password}   (random; set TESTER_PASSWORD in .env.local to choose your own)`,
+  );
+  console.log("  Then: Open Sam's page → Progress → Math outcomes");
+}
+
 const command = process.argv[2] ?? "reset";
-const run = { reset, "time-travel": timeTravel, "slot-now": slotNow }[command];
+const run = { reset, "time-travel": timeTravel, "slot-now": slotNow, testers }[command];
 if (!run) {
-  console.error(`Unknown command "${command}". Use: reset | time-travel | slot-now`);
+  console.error(`Unknown command "${command}". Use: reset | time-travel | slot-now | testers`);
   process.exit(1);
 }
 run().catch((err: unknown) => {

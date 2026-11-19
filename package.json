@@ -13,7 +13,8 @@
     "seed:demo": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts reset",
     "demo:reset": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts reset",
     "demo:time-travel": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts time-travel",
-    "demo:slot-now": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts slot-now"
+    "demo:slot-now": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts slot-now",
+    "demo:testers": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts testers"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.10.0",

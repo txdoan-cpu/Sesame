@@ -37,7 +37,7 @@ After `demo:reset`, Alex has: 8PR2 *learning*, 8N7 *nearly there*, misconception
 
 1. **Parent**: dashboard → **Open Alex's page**. Show the tabs Progress, Rewards, Schedule, Account.
 2. Press **Tiếng Việt**, then **English**: the parent side is bilingual.
-3. On Progress, show the outcome board grouped by the 4 strands, and "This week".
+3. On Progress, show "This week", the **Why this lesson** card (what was noticed → what the lesson does → which teaching criteria it meets, fit score 92/100), and the outcome board grouped by the 4 strands. Reasons about mistakes and math anxiety only show when Alex shares "Mistakes I often make".
 4. **Learner**: home page shows "My math goals" with 8PR2 marked **Next lesson**.
 
 ---
@@ -141,11 +141,16 @@ Voice on iPhone/iPad: speech recognition may not work in Safari; the learner typ
 
 ## 9. Outcome board check with 5 people (target ≥ 4/5)
 
-Show each tester the parent **Progress** tab for Alex (after scenario B), say nothing else, and ask:
+Testers use a **separate tester family** so they never disturb the main demo. Before sending the link:
 
-1. Which part of Grade 8 math is Alex working on right now?
-2. Has Alex reached that goal? How can you tell?
-3. Name one math topic Alex has not started.
+1. Put a password in `.env.local` as `TESTER_PASSWORD=` (different from `DEMO_PASSWORD`).
+2. Run `npm run demo:testers`. It (re)creates the parent `tester.parent@example.com` and the learner **Sam**: 8N1 and 8PR2 *achieved*, 8N7 *nearly there*, 8N3 *learning*, everything else *not started*. Run it again before each tester if someone changed something.
+
+Send each tester the live link, the login (Parents box: `tester.parent@example.com` + the tester password) and: *"Open Sam's page, then look at Math outcomes."* Say nothing else, then ask:
+
+1. Name one math goal Sam has already reached. *(8N1 or 8PR2)*
+2. Which goal is Sam closest to reaching next? *(8N7, "Nearly there")*
+3. Name one math topic Sam has not started yet. *(any "Not started", e.g. 8SS1)*
 
 A tester passes when they answer all three correctly without help. Write the results here:
 
