@@ -70,7 +70,8 @@ async function signInAndRedirect(email: string, password: string): Promise<Actio
 
   // Same client now carries the new session, so RLS lets us read our own profile.
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
-  redirect(profile?.role === "learner" ? homeFor("learner") : homeFor("parent"));
+  const role = profile?.role;
+  redirect(role === "learner" || role === "teacher" || role === "admin" ? homeFor(role) : homeFor("parent"));
 }
 
 export async function logout(): Promise<void> {

@@ -7,14 +7,14 @@ import { supabaseEnv } from "@/lib/supabase/env";
 
 const ProfileRow = z.object({
   id: z.uuid(),
-  role: z.enum(["parent", "learner"]),
+  role: z.enum(["parent", "learner", "teacher", "admin"]),
   display_name: z.string(),
   username: z.string().nullable(),
 });
 
 export type CurrentUser = {
   id: string;
-  role: "parent" | "learner";
+  role: "parent" | "learner" | "teacher" | "admin";
   displayName: string;
   username: string | null;
 };
@@ -42,8 +42,18 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   };
 });
 
-export function homeFor(role: CurrentUser["role"]): "/parent" | "/learner" {
-  return role === "parent" ? "/parent" : "/learner";
+export type Home = "/parent" | "/learner" | "/teacher" | "/admin";
+
+export function homeFor(role: CurrentUser["role"]): Home {
+  return role === "parent" ? "/parent" : role === "learner" ? "/learner" : role === "teacher" ? "/teacher" : "/admin";
+}
+
+/** Teachers and admins (content work). Admins can do everything a teacher can. */
+export async function requireStaff(): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  if (user.role !== "teacher" && user.role !== "admin") redirect(homeFor(user.role));
+  return user;
 }
 
 /** Redirects to login if signed out, or to the user's own home if the role is wrong. */
