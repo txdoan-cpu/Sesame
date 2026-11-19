@@ -7,6 +7,8 @@ import { SHARING_ITEMS, type SharingItem } from "@/lib/sharing";
 import { rewardProgress } from "@/lib/rewards";
 import { sortSlots, type Slot } from "@/lib/schedule";
 import type { OutcomeStatusKind } from "@/lib/learner-profile";
+import { weekStart } from "@/lib/time";
+import { buildWeeklySummary, type WeeklySummary } from "@/lib/weekly";
 
 /**
  * What a parent may see about a child (CLAUDE.md §6, §7.3). Everything about
@@ -198,4 +200,35 @@ export async function getMyNotifications(): Promise<NotificationView[]> {
   const db = await createClient();
   const r = await db.from("notifications").select("id, type, payload, read_at, created_at").order("created_at", { ascending: false }).limit(50);
   return z.array(NotificationRow).parse(r.data ?? []);
+}
+
+/**
+ * "This week" for a child, read through the same sharing-aware views
+ * (so the learner's preview shows the same numbers).
+ */
+export async function getThisWeek(learnerId: string, at?: Date): Promise<WeeklySummary> {
+  const db = await createClient();
+  const now = at ?? new Date(); // after the request-time access above
+  const since = weekStart(now).toISOString();
+  const [sharingRes, sessions, slots, rewards] = await Promise.all([
+    db.from("sharing_v").select("item, shared").eq("learner_id", learnerId).eq("item", "outcome_status").maybeSingle(),
+    db.from("parent_attendance_v").select("scheduled_for, started_at, active_seconds, idle_seconds, engagement").eq("learner_id", learnerId).gte("started_at", since),
+    getSchedule(learnerId),
+    getRewardRules(learnerId),
+  ]);
+  const outcomesShared = sharingRes.data?.shared !== false;
+  let outcomesAchieved: string[] | null = null;
+  if (outcomesShared) {
+    const r = await db.from("parent_outcome_status_v").select("outcome_code, achieved_at").eq("learner_id", learnerId).gte("achieved_at", since);
+    outcomesAchieved = (r.data ?? []).map((x) => x.outcome_code as string);
+  }
+  return buildWeeklySummary({
+    now,
+    slots,
+    sessions: z
+      .array(z.object({ scheduled_for: z.string().nullable(), started_at: z.string().nullable(), active_seconds: z.number(), idle_seconds: z.number(), engagement: z.string().nullable() }))
+      .parse(sessions.data ?? []),
+    rewards: rewards.map((r) => ({ reward_text: r.reward_text, achieved: r.progress.achieved, total: r.progress.total, status: r.status })),
+    outcomesAchieved,
+  });
 }

@@ -3,6 +3,7 @@ import type { Lang } from "@/lib/i18n";
 import type { StrandWithOutcomes, MisconceptionInfo } from "@/lib/curriculum";
 import type { ChildView, NotificationView, RewardRuleView } from "@/lib/portal";
 import type { SharingItem } from "@/lib/sharing";
+import type { WeeklySummary } from "@/lib/weekly";
 import { OutcomeBoard } from "./OutcomeBoard";
 import { cardClass, fill } from "./styles";
 
@@ -15,9 +16,29 @@ type Props = {
   misconceptionInfo: MisconceptionInfo[];
   /** Parent's safety alerts about this child; null on the learner's preview (they cannot read them). */
   safetyAlerts: NotificationView[] | null;
+  week: WeeklySummary;
   t: PortalMessages;
   lang: Lang;
 };
+
+/** The weekly report, live: attendance (locked), active time, outcomes if shared. */
+function ThisWeek({ week, t }: { week: WeeklySummary; t: PortalMessages }) {
+  const w = t.thisWeek;
+  return (
+    <section aria-labelledby="h-week" className={`${cardClass} border-blue-700`} data-testid="this-week">
+      <h2 id="h-week" className="text-xl font-semibold">
+        {w.title}
+      </h2>
+      <p>{fill(w.sessions, { attended: week.attended, scheduled: week.scheduled })}</p>
+      <p>{fill(w.active, { active: week.activeMinutes, idle: week.idleMinutes })}</p>
+      {week.sessions > 0 && <p>{fill(w.engagement, week.engagement)}</p>}
+      {week.outcomesAchieved !== null && (
+        <p>{week.outcomesAchieved.length ? fill(w.outcomes, { list: week.outcomesAchieved.join(", ") }) : w.noOutcomes}</p>
+      )}
+      <p className="text-base text-zinc-700 dark:text-zinc-300">{w.note}</p>
+    </section>
+  );
+}
 
 function date(iso: string, lang: Lang): string {
   return new Date(iso).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-CA", { year: "numeric", month: "short", day: "numeric" });
@@ -59,11 +80,12 @@ function SharedSection({
   );
 }
 
-export function ChildProgress({ view, rewards, curriculum, misconceptionInfo, safetyAlerts, t, lang }: Props) {
+export function ChildProgress({ view, rewards, curriculum, misconceptionInfo, safetyAlerts, week, t, lang }: Props) {
   const status = view.outcomeStatus ? Object.fromEntries(view.outcomeStatus.map((o) => [o.outcome_code, o.status])) : {};
 
   return (
     <div className="flex flex-col gap-5">
+      <ThisWeek week={week} t={t} />
       <SharedSection item="attendance" sharing={view.sharing} t={t}>
         {view.attendance.length === 0 ? (
           <p>{t.attendanceEmpty}</p>

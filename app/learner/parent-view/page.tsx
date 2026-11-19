@@ -6,7 +6,7 @@ import { linkClass } from "@/app/_components/styles";
 import { requireRole } from "@/lib/auth/dal";
 import { getCurriculum, getMisconceptionInfo } from "@/lib/curriculum";
 import { learnerMessages } from "@/lib/i18n";
-import { getChildView, getRewardRules } from "@/lib/portal";
+import { getChildView, getRewardRules, getThisWeek } from "@/lib/portal";
 import en from "@/messages/en.json";
 
 export const metadata: Metadata = { title: "What my parent sees — Sesame" };
@@ -29,11 +29,12 @@ export default function ParentViewPage() {
 
 async function ParentView() {
   const user = await requireRole("learner");
-  const [view, rewards, curriculum, misconceptionInfo] = await Promise.all([
+  const [view, rewards, curriculum, misconceptionInfo, week] = await Promise.all([
     getChildView(user.id),
     getRewardRules(user.id),
     getCurriculum(),
     getMisconceptionInfo(),
+    getThisWeek(user.id),
   ]);
 
   return (
@@ -54,6 +55,7 @@ async function ParentView() {
         curriculum={curriculum}
         misconceptionInfo={misconceptionInfo}
         safetyAlerts={null}
+        week={week}
         t={en.portal}
         lang="en"
       />

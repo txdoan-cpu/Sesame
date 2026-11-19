@@ -217,8 +217,25 @@
         "schedule_request": "{name} xin đổi một giờ học.",
         "reward_accepted": "{name} đã đồng ý mục tiêu: {reward}.",
         "reward_suggestion": "{name} đề nghị thay đổi mục tiêu \"{reward}\": {note}",
-        "other": "Cập nhật về {name}."
+        "other": "Cập nhật về {name}.",
+        "idle": "Buổi học của {name} đã tạm dừng ở slide {slide}, sau {active} phút học thật. Vắng mặt {away} phút.",
+        "missed_session": "{name} đã lỡ buổi học {day} lúc {time}. Đề xuất học bù: {makeUpDay} lúc {makeUpTime}.",
+        "milestone_halfway": "Đã được nửa đường! {name} đã đạt {outcomes} cho mục tiêu \"{reward}\".",
+        "milestone_progress": "{name} đã đạt {outcomes} cho mục tiêu \"{reward}\" ({achieved}/{total}).",
+        "milestone_all_reached": "{name} đã đạt tất cả mục tiêu cho \"{reward}\". Tiếp theo là bài kiểm tra trí nhớ.",
+        "reward_unlocked": "{name} đã mở khoá phần thưởng \"{reward}\"! Câu khen gợi ý: \"{praise}\"",
+        "reward_expired": "Mục tiêu \"{reward}\" của {name} đã quá hạn mà chưa đạt.",
+        "weekly_summary": "Báo cáo tuần của {name}: {attended}/{scheduled} buổi học theo lịch, {active} phút học thật."
       }
+    },
+    "thisWeek": {
+      "title": "Tuần này",
+      "sessions": "Đã học {attended}/{scheduled} buổi theo lịch",
+      "active": "{active} phút học thật, {idle} phút ngồi không",
+      "engagement": "Các buổi học: {active} học thật sự, {passive} học một phần, {away} phần lớn vắng mặt",
+      "outcomes": "Mục tiêu đạt được tuần này: {list}",
+      "noOutcomes": "Tuần này chưa đạt thêm mục tiêu nào.",
+      "note": "Thời gian vắng mặt không bao giờ được tính vào tiến độ hay phần thưởng."
     }
   }
 }

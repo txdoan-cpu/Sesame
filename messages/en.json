@@ -132,6 +132,17 @@
         "pending": "Waiting for your parent",
         "approved": "Approved",
         "declined": "Not this time"
+      },
+      "newsTitle": "News",
+      "dismiss": "Got it",
+      "checkReady": "Memory check ready for {outcome}",
+      "checkButton": "Start memory check",
+      "news": {
+        "milestone_halfway": "Halfway there! You reached {outcomes} for your goal \"{reward}\".",
+        "milestone_progress": "Nice! You reached {outcomes} for your goal \"{reward}\" ({achieved} of {total}).",
+        "milestone_all_reached": "You reached every outcome for \"{reward}\"! Do your memory check to unlock it.",
+        "reward_unlocked": "You unlocked your reward: {reward}! Great work.",
+        "reward_expired": "The goal \"{reward}\" ran out of time. Talk with your parent about a new one."
       }
     },
     "lesson": {
@@ -216,6 +227,15 @@
         "noSpeech": "I did not hear anything. Try again, or type your question.",
         "safetyTitle": "Let's take a break",
         "safetyBack": "Back to my goals"
+      },
+      "engagement": {
+        "stillThere": "Are you still there?",
+        "stillThereSpoken": "Are you still there? Tap I'm back when you are ready.",
+        "pausedAt": "The lesson is paused at slide {n}. Your place is saved.",
+        "back": "I'm back",
+        "reviewTitle": "Quick review",
+        "reviewIntro": "Welcome back! Here is a quick one before we go on.",
+        "continue": "Continue the lesson"
       }
     },
     "sharing": {
@@ -248,6 +268,12 @@
       "intro": "This is exactly what your parent sees about you.",
       "back": "Back to my goals",
       "change": "Change what I share"
+    },
+    "check": {
+      "title": "Memory check",
+      "intro": "You reached {outcome} a while ago. Let's see if you still remember it. Same kind of questions as before.",
+      "formTitle": "Show you still remember",
+      "notReady": "No memory check is ready right now. Come back later!"
     }
   },
   "portal": {
@@ -393,8 +419,25 @@
         "schedule_request": "{name} asked to change a study time.",
         "reward_accepted": "{name} accepted the goal: {reward}.",
         "reward_suggestion": "{name} suggests a change to the goal \"{reward}\": {note}",
-        "other": "Update about {name}."
+        "other": "Update about {name}.",
+        "idle": "{name}'s session paused at slide {slide}, {active} minutes of active study. Away for {away} minutes.",
+        "missed_session": "{name} missed the {day} {time} study session. Suggested make-up: {makeUpDay} at {makeUpTime}.",
+        "milestone_halfway": "Halfway there! {name} reached {outcomes} for the goal \"{reward}\".",
+        "milestone_progress": "{name} reached {outcomes} for the goal \"{reward}\" ({achieved} of {total}).",
+        "milestone_all_reached": "{name} reached every outcome for \"{reward}\". The memory check is next.",
+        "reward_unlocked": "{name} unlocked the reward \"{reward}\"! Suggested praise: \"{praise}\"",
+        "reward_expired": "The goal \"{reward}\" for {name} passed its deadline without being reached.",
+        "weekly_summary": "Weekly report for {name}: {attended} of {scheduled} scheduled sessions, {active} minutes of active study."
       }
+    },
+    "thisWeek": {
+      "title": "This week",
+      "sessions": "{attended} of {scheduled} scheduled sessions attended",
+      "active": "{active} minutes of active study, {idle} minutes idle",
+      "engagement": "Sessions: {active} really studying, {passive} partly, {away} mostly away",
+      "outcomes": "Outcomes reached this week: {list}",
+      "noOutcomes": "No new outcomes reached this week.",
+      "note": "Away time never counts toward progress or rewards."
     }
   }
 }
