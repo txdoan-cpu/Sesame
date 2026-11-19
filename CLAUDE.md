@@ -17,10 +17,12 @@ Three learner-facing solutions:
 3. **Parent portal**: outcome progress, parent-set rewards, study schedule, engagement
    (really studying vs. idle), all filtered by what the learner chooses to share.
 
-Out of scope for this demo: school channel (teachers, school admin, LMS), automatic
-barge-in (we use push-to-talk), the 6-agent lesson-generation pipeline (lesson 8PR2 is
-pre-authored JSON), the Assessment Agent (we seed a sample learner profile), gift-card
-purchasing, payments, native mobile apps, avatars.
+Rounds 0–7 deliver the demo with a pre-authored 8PR2 lesson and a seeded learner profile.
+Rounds 8–10 add: teachers entering learning outcomes and reference materials, an automatic
+learner model, and automatic method selection + slide generation (see §7.7–7.9).
+
+Out of scope: school channel features (class rosters, school admin, LMS), automatic
+barge-in (we use push-to-talk), gift-card purchasing, payments, native mobile apps, avatars.
 
 ## 2. Users and language
 
@@ -28,6 +30,10 @@ purchasing, payments, native mobile apps, avatars.
   Reading level around grade 6: short sentences, plain words.
 - **Parent**: UI in **English with a Vietnamese toggle** (strings in `/messages/en.json`
   and `/messages/vi.json`). Outcome descriptions have a `parent_friendly` version.
+- **Teacher (content teacher)**: enters learning outcomes, indicators, misconceptions and
+  reference materials, and reviews generated lessons. UI in English. In the parent channel a
+  teacher never sees a learner's name, parent or contact details: lessons sent for review show
+  a pseudonymous learner id and only the profile fields the lesson used.
 - Must work on desktop, tablet and phone (responsive, touch-friendly, min tap target 44px).
 
 ## 3. Stack
@@ -55,6 +61,7 @@ npm run test       # Vitest
 npm run test:e2e   # Playwright (desktop, tablet, phone)
 npm run eval:ask   # 10 scripted questions against the real LLM provider (needs a key)
 npm run demo:reset # demo family; also demo:time-travel (scenario B), demo:slot-now (scenario C); see DEMO.md
+npm run admin:create -- <email>   # first admin account (password from ADMIN_PASSWORD in .env.local); admins create teachers at /admin
 npx supabase db push --remote   # apply migrations to the linked Supabase cloud project (newer CLI targets local Docker without --remote)
 ```
 
@@ -91,7 +98,11 @@ tests/
 
 | Table | Key columns | Notes |
 | --- | --- | --- |
-| profiles | id (= auth.users.id), role ('parent' \| 'learner'), display_name | |
+| profiles | id (= auth.users.id), role ('parent' \| 'learner' \| 'teacher' \| 'admin'), display_name | Teacher accounts are created/approved by an admin |
+| curricula | id, province ('NL'), grade, subject, source_title, source_url | One "curriculum pack" per province/grade/subject; never hard-code Grade 8 Math in code |
+| materials | id, curriculum_id, outcome_codes text[], title, source_url, storage_path, licence, uploaded_by, rubric_r jsonb, status ('pending' \| 'approved' \| 'rejected') | Files in a private Supabase Storage bucket |
+| knowledge_state | learner_id, skill_id, p_mastery, p_transit, p_slip, p_guess, attempts, updated_at | BKT state per learner per skill/indicator |
+| lesson_reviews | id, lesson_id, reviewer_id, fit_score, rubric_s jsonb, decision ('approve' \| 'revise' \| 'reject'), notes, created_at | Human review of generated lessons |
 | family_links | parent_id, learner_id, relationship | Allow many parents per learner later |
 | outcomes | code ('8PR2'), strand, description_en, description_vi, parent_friendly | 17 NL Grade 8 outcomes (Appendix A) |
 | indicators | code ('PR2.1'), outcome_code, description | |
@@ -115,6 +126,10 @@ tests/
   select from base learner tables directly.
 - Parents write `reward_rules`, `schedules`; learners write `sharing_settings` where
   `locked = false`.
+- Teachers create/update `curricula`, `outcomes`, `indicators`, `misconceptions` and
+  `materials` (their own drafts; approved items become read-only except for admins), and
+  write `lesson_reviews`. Teachers read lessons through a view that pseudonymises learners;
+  they never read `profiles`, `family_links`, `sessions`, `questions` or parent data.
 - Service-role key is used only in server code, never in the browser.
 
 ## 7. Domain rules (do not change without asking)
@@ -187,6 +202,48 @@ instead of data. The learner sees exactly what the parent sees on a "What my par
 - Parent sets weekly slots. Learner can request a change (parent approves).
 - Missed session → notify parent and propose a make-up slot.
 
+### 7.7 Teacher input: outcomes and materials (Round 8)
+- Teacher creates or picks a curriculum pack (province, grade, subject, official source).
+- Outcomes: add by form or by uploading CSV/JSON (code, strand, description, Bloom level,
+  knowledge type conceptual/procedural, indicators, misconceptions, prerequisites).
+  Validate with zod; show a preview before saving; flag duplicate codes.
+- Materials: upload PDF/image/text or paste a URL; licence is required (CC licence, public
+  document, or fair dealing note). Link each material to one or more outcomes.
+- Owner decisions (Round 8): teacher accounts are created by an admin in the app (`/admin`);
+  the first admin is created with `npm run admin:create`. Round 8+ work lives on branch
+  `UpdateTeacherAgent`, committed locally only (not pushed; the live Vercel demo stays on `main`).
+  The Supabase database is shared with the live demo, so migrations are additive only, and new
+  curriculum packs, outcomes, indicators, misconceptions and materials are visible only to
+  teachers and admins until a pack is published: learners and parents keep seeing the 17 NL
+  Grade 8 outcomes.
+- After upload, the server extracts text and scores Rubric R (Appendix C) with the LLM;
+  gate criteria R1, R3, R5, R9 < 2 → status `rejected` with reasons. The teacher sees the scores
+  and can override with a written reason. Only `approved` materials feed lesson generation.
+
+### 7.8 Automatic learner model (Round 9)
+- Every scored answer (checkpoint, practice, exit ticket, spoken answer after parsing) updates
+  `knowledge_state` with standard BKT. Defaults until calibrated: p_init from the diagnostic
+  (else 0.3), p_transit 0.2, p_slip 0.1, p_guess 0.2.
+- Per-learner p_transit is re-estimated after every 20 answers (individualized BKT).
+  learning_rate.level: slow < 0.15 ≤ medium ≤ 0.30 < fast (initial thresholds).
+- `readiness` = mean p_mastery of the LO's prerequisites. Recompute `learner_profiles` after
+  each session; outcome_status follows the 5 statuses in §6.
+- If `confidence_of_estimate` < 0.6, the next lesson starts with 3–4 diagnostic items.
+
+### 7.9 Automatic method selection and slide generation (Round 10, needs an API key)
+- Implement Appendix C exactly: split into activities (activate, present, guided practice,
+  apply, close) → filter with rules D1–D8 → score methods with Rubric T × evidence grade
+  (A 1.0, B 0.8, C 0.5, learning styles 0) → pick the best per activity → rationale card with
+  citations. Keep the method catalogue and rules as data (`content/pedagogy/*.json`), not code.
+- Content Author fills slide templates (worked example, faded example, concrete→pictorial→
+  symbolic, "Who's right?", retrieval question, exit ticket) only from `approved` materials,
+  keeping source URL and licence; pacing from the pace table in Appendix C.
+- Every equation/answer passes `lib/math/check.ts`; any failure blocks delivery.
+- Critic scores Rubric S (Appendix C). Gate criteria S1, S10, S11 must be ≥ 2. ≥ 75 → deliver;
+  60–74 → regenerate (max 2 times); < 60 or still failing → queue for teacher review
+  (`lesson_reviews`). Until a teacher approves, the learner gets the pre-approved standard
+  lesson for that LO.
+
 ## 8. Build rounds (do one round at a time; stop and report at the end of each)
 
 | Round | Scope | Done when |
@@ -199,6 +256,9 @@ instead of data. The learner sees exactly what the parent sees on a "What my par
 | 5 Parent portal | Dashboard, reward rules, schedule, learner sharing settings, "What my parent sees", parent resets a linked child's password (learners have no email) | Sharing tests pass for every item in §7.3 |
 | 6 Engagement & notifications | Sessions, idle detection, alerts, weekly summary, reward evaluation | Demo scenarios B (reward) and C (idle) run end to end |
 | 7 Polish | Responsive check on phone/tablet/desktop, demo accounts, demo script in `DEMO.md`, "Was this helpful?" on answers (`questions.helpful`) | All demo targets in the proposal's roadmap table met |
+| 8 Teacher input | Teacher role and accounts; curriculum packs; outcome form + CSV/JSON import; material upload with licence; Rubric R scoring; teacher RLS (§7.7) | A teacher adds a new LO with 2 materials, sees Rubric R scores; tests prove teachers cannot read learner/parent data |
+| 9 Learner model | BKT updates per answer, per-learner learning rate, readiness, automatic pacing (§7.8) | Simulated learner answering wrong repeatedly is moved to "slow" pacing; unit tests for BKT updates |
+| 10 Lesson generation | Planner (D1–D8, Rubric T), Content Author, Critic (Rubric S), teacher review queue (§7.9) | For a new LO with approved materials, the system generates a lesson scoring ≥ 75 with rationale card and citations; failing lessons reach the review queue |
 
 Round 0 smoke test details: `GET /api/health/claude` calls Claude with the prompt
 "Reply with exactly: Claude API connected." and `max_tokens` 50, returns
@@ -217,7 +277,15 @@ until the owner approves.
   "grade": 8,
   "school_context": "St. John's, NL (English program)",
   "target_outcome": "8PR2",
-  "mastery": {"8PR2.one_step": 0.85, "8PR2.two_step": 0.45, "8PR2.distributive": 0.20, "8N7.integers": 0.70},
+  "prerequisites": [
+    {"id": "G7.preservation_of_equality", "name": "Preservation of equality", "mastery": 0.75},
+    {"id": "G7.one_step_equations", "name": "One-step linear equations", "mastery": 0.85},
+    {"id": "8N7.integers", "name": "Multiplying and dividing integers", "mastery": 0.70},
+    {"id": "G7.distributive_property", "name": "Distributive property", "mastery": 0.40}
+  ],
+  "readiness": 0.68,
+  "mastery": {"8PR2.two_step": 0.45, "8PR2.distributive": 0.20},
+  "learning_rate": {"level": "medium", "p_transit": 0.25, "items_to_mastery_avg": 5},
   "misconceptions": ["M2", "M3"],
   "affect": {"math_anxiety": "moderate", "confidence_self_report": 2},
   "reading_level": "grade 6",
@@ -228,6 +296,9 @@ until the owner approves.
   "confidence_of_estimate": 0.7
 }
 ```
+`readiness` = mean prerequisite mastery. `learning_rate.level` (slow | medium | fast) sets pacing:
+segment length 3/4/5 min, worked examples before fading 3/2/1, checks every 2/3/4 min,
+practice items 6-8 / 4-6 / 2-3 + transfer task (see Appendix C).
 Validate with zod at every boundary. If `confidence_of_estimate < 0.6`, the lesson starts
 with 3–4 short diagnostic questions.
 
@@ -320,3 +391,65 @@ dollars, plus three dollars for every hour. You paid nineteen dollars. How many 
 skate? Let's turn that story into a balance. On one side: three x plus four. On the other: nineteen."
 
 Every equation and answer in this lesson must pass `lib/math/check.ts` (substitution) in a unit test.
+
+## Appendix C — Pedagogy rules (source of truth for Rounds 8–10)
+
+Store these as data in `content/pedagogy/` (rubric_r.json, rubric_t.json, rubric_s.json,
+rules.json, methods.json, pace.json). All scores 0–3; weighted totals scaled to 0–100 where noted.
+Gate criteria [G] must score ≥ 2 or the item is rejected regardless of total.
+
+### Rubric R — materials (select if all gates pass and weighted mean ≥ 2.0/3; keep top 2–3)
+R1 [G] matches LO content and action verb (20%) · R2 Bloom level matches (10%) ·
+R3 [G] accurate, verified by SymPy/teacher (15%) · R4 relies only on known prerequisites or reviews them (15%) ·
+R5 [G] trusted source: NL Dept of Education, provincially authorised, peer-reviewed OER or journal (10%) ·
+R6 Canadian context (5%) · R7 easy to turn into slides (10%) · R8 surfaces misconceptions (5%) ·
+R9 [G] licence allows use (5%) · R10 accessible (5%).
+
+### Evidence grades
+A = meta-analysis in a leading journal or WWC practice guide recommendation (1.0) ·
+B = RCT / quasi-experiment in a peer-reviewed journal (0.8) · C = recognised framework (0.5) ·
+excluded = refuted (0, e.g. learning styles).
+
+### Rubric T — teaching methods (per activity, per learner)
+T1 fits knowledge type and Bloom level (20%) · T2 fits readiness / expertise reversal (20%) ·
+T3 fits learning pace (10%) · T4 addresses known misconceptions (10%) ·
+T5 ICAP engagement level (15%) · T6 works 1:1 with slides + voice in the time available (10%) ·
+T7 builds in feedback / formative assessment (15%).
+Score(m) = evidence_weight(m) × Σ w_i·T_i(m). Pick the highest per activity.
+
+### Methods catalogue (fits when / avoid when / evidence)
+- direct_instruction_worked_examples: low readiness, procedural / proficient learner / A
+- faded_examples: moving from examples to solving / first example not understood / B
+- concreteness_fading: new symbolic concept / already fluent with symbols / A
+- compare_solutions_incorrect_examples: misconception present / no correct method yet / A
+- guided_discovery: concept, readiness ≥ 0.6 / readiness < 0.6 / A
+- problem_solving_transfer: mastery ≥ 0.8 / first encounter / A
+- self_explanation: any phase, by voice / — / A
+- retrieval_spacing_interleaving: consolidation / brand-new knowledge / A
+- targeted_feedback: after every check / — / A
+- collaborative_or_flipped: school channel only / 1:1 home study / A (not used in demo)
+
+### Rules D1–D8 (hard filters)
+D1 readiness < 0.6 → no unguided discovery; start with worked examples then fade.
+D2 mastery ≥ 0.8 → replace worked examples with problems and transfer tasks.
+D3 misconception present → include a correct/incorrect solution comparison.
+D4 new symbolic concept → concrete → pictorial → symbolic sequence.
+D5 consolidation → retrieval practice + spaced review.
+D6 every activity at least ICAP Active; prefer Constructive (spoken self-explanation).
+D7 move to a new LO only at ≥ 80%.
+D8 never adapt to learning styles.
+
+### Pace table (slow / medium / fast)
+segment length ≤ 3 / 4 / 5 min · worked examples before fading 3 / 2 / 1 ·
+understanding checks every 2 / 3 / 4 min · practice items 6–8 / 4–6 / 2–3 + 1 transfer ·
+review after 1,3,7 / 2,7 / 7 days · narration rate 0.9 / 1.0 / 1.05.
+
+### Rubric S — slide deck review (Pedagogical Fit Score, 0–100)
+S1 [G] LO × slide matrix: each indicator has ≥ 1 teaching and ≥ 1 checking slide (15%) ·
+S2 Bloom level (5%) · S3 all activities present (5%) · S4 methods match the decision model and D1–D8 (10%) ·
+S5 checks + feedback (10%) · S6 coherence, no decoration (5%) · S7 image next to its text (5%) ·
+S8 one idea per slide, stepped examples (5%) · S9 signalling, narration not copied onto slides (5%) ·
+S10 [G] no math errors (10%) · S11 [G] age-appropriate, unbiased, sources cited (5%) ·
+S12 content/design/coherence 1–5 each (5%) · S13 contrast ≥ 4.5:1, readable on phone (5%) ·
+S14 review slides for prerequisites < 0.7 and misconception slides (5%) · S15 pacing matches pace table (5%).
+Thresholds: ≥ 75 and all gates → deliver; 60–74 → regenerate (max 2); < 60 → teacher review.
