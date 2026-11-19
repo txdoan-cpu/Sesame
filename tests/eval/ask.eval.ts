@@ -60,10 +60,15 @@ function ctx(slideNo: number, question: string): AskContext {
 
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** Time from sending a question to having the answer, per successful call (demo target: a few seconds). */
+const latencies: number[] = [];
+
 /** Free-tier quotas are tight: on a rate limit, wait and try again (does not change the score rules). */
 async function ask(c: AskContext) {
   for (let attempt = 0; ; attempt++) {
+    const started = performance.now();
     const r = await answerQuestion(c);
+    if (r.kind === "answer") latencies.push(performance.now() - started);
     if (r.kind === "error" && r.code === "rate_limited" && attempt < 3) {
       await pause(30_000);
       continue;
@@ -98,12 +103,17 @@ describe.runIf(llmConfigured())(`ask eval with ${llmProvider()}`, () => {
       const ok = !r.fallback && c.context.test(r.answer) && words(r.answer) <= 100 && r.checkQuestion.length > 0 && !NICKNAME.test(r.answer);
       if (ok) inContext++;
       rows.push(
-        `${ok ? "✓" : "✗"} s${c.slide} ${c.question}\n    -> ${r.answer} [${r.checkQuestion}] (${words(r.answer)} words, ${r.indicator ?? "-"}, ${r.misconception ?? "-"}${r.fallback ? `, fallback:${r.fallback}` : ""})`,
+        `${ok ? "✓" : "✗"} s${c.slide} ${c.question}\n    -> ${r.answer} [${r.checkQuestion}] (${words(r.answer)} words, ${r.indicator ?? "-"}, ${r.misconception ?? "-"}${r.fallback ? `, fallback:${r.fallback} [${r.failures.join("; ")}]` : ""})`,
       );
     }
 
-    console.log(`\n${rows.join("\n")}\n\nIn context: ${inContext}/${CASES.length}  math errors shown: ${mathErrors}  fallbacks: ${fallbacks}\n`);
+    const sorted = [...latencies].sort((x, y) => x - y);
+    const median = sorted[Math.floor(sorted.length / 2)] ?? 0;
+    console.log(`\n${rows.join("\n")}\n\nIn context: ${inContext}/${CASES.length}  math errors shown: ${mathErrors}  fallbacks: ${fallbacks}`);
+    console.log(`Answer time: median ${(median / 1000).toFixed(1)} s, slowest ${((sorted.at(-1) ?? 0) / 1000).toFixed(1)} s\n`);
     expect(mathErrors).toBe(0);
+    // Demo target "a few seconds" (realtime voice under 1 s comes after the demo).
+    expect(median).toBeLessThan(8_000);
     expect(inContext).toBeGreaterThanOrEqual(9);
   });
 

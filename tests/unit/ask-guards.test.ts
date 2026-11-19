@@ -70,6 +70,10 @@ describe("math guard", () => {
     expect(statedValues("3x = 15")).toEqual([]);
     expect(statedValues("Here x is 4 times bigger. x = 2 + 3 is not done yet.")).toEqual([]);
     expect(statedValues("x is 5.")).toEqual([5]);
+    // x inside a product is not a result (seen with a real model on "4x = 20").
+    expect(statedValues("We have 4 times x = 20, so divide.")).toEqual([]);
+    expect(statedValues("4·x = 20 and 2 groups of x = 8")).toEqual([]);
+    expect(statedValues("Divide both sides by 4, so x = 5.")).toEqual([5]);
     expect(equationsInText("First 3x + 4 = 19, then 3x = 15.")).toEqual(["3x + 4 = 19", "3x = 15"]);
   });
 

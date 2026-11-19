@@ -20,12 +20,14 @@ export function equationsInText(text: string): string[] {
 
 /**
  * Values the text states for x: "x = 5", "x is -4", "x equals 6".
- * Not "x is 4 times…" or "x = 2x…" (descriptions or expressions, not results).
+ * Not "x is 4 times…" or "x = 2x…" (descriptions or expressions, not results),
+ * and not when x is part of a product: "4 times x = 20", "4·x = 20", "groups of x = …".
  */
 export function statedValues(text: string): number[] {
   const t = normaliseMath(text).toLowerCase();
+  const notInProduct = String.raw`(?<!(?:[\d)*/]|\btimes|\bof|\bby)\s*)`;
   const notResult = String.raw`(?![\d.]*\s*(?:[x*/(+]|-\s*\d|times|groups?|lots|more|less|fewer|bigger|smaller))`;
-  const re = new RegExp(String.raw`\bx\s*(?:=|is|equals)\s*(${NUM})${notResult}`, "g");
+  const re = new RegExp(String.raw`${notInProduct}\bx\s*(?:=|is|equals)\s*(${NUM})${notResult}`, "g");
   return [...t.matchAll(re)].map((m) => Number(m[1]));
 }
 
