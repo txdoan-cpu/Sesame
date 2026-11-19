@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { LessonView } from "@/lib/lesson/view";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { LessonView, NumericItemView } from "@/lib/lesson/view";
 import { learnerMessages } from "@/lib/i18n";
 import Link from "next/link";
 import { AskPanel } from "./AskPanel";
 import { Checkpoint, NumericCheck, type ItemOutcome } from "./Checkpoint";
 import { ExitTicket } from "./ExitTicket";
 import { Visual } from "./Visuals";
+import { useEngagement } from "./useEngagement";
 import { useNarration } from "./useNarration";
 
 const t = learnerMessages.lesson;
@@ -25,6 +26,8 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: Play
   const narration = useNarration();
   const headingRef = useRef<HTMLHeadingElement>(null);
 
+  const [review, setReview] = useState<NumericItemView | null>(null);
+
   const slide = lesson.slides[index];
   const isLast = index === lesson.slides.length - 1;
   const checkpointDone = !slide.checkpoint || slide.checkpoint.every((item) => outcomes[item.id]);
@@ -38,7 +41,41 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: Play
     return () => stop();
   }, [phase, index, lesson.slides, speak, stop, safetyMessage]);
 
-  const recordOutcome = (o: ItemOutcome) => setOutcomes((prev) => ({ ...prev, [o.id]: o }));
+  // §7.5: no answer to a check-in for 60 s → pause and ask "Are you still there?" out loud.
+  const onPause = useCallback(() => {
+    stop();
+    speak(t.engagement.stillThereSpoken);
+  }, [speak, stop]);
+  const engagement = useEngagement({
+    enabled: (phase === "slides" || phase === "exit") && !safetyMessage,
+    lessonId: lesson.id,
+    slideNo: phase === "exit" ? lesson.slides.length : slide.no,
+    checkpointOpen: phase === "slides" && !checkpointDone && review === null,
+    narrationSpeakingRef: narration.speakingRef,
+    narrationStartedAtRef: narration.startedAtRef,
+    onPause,
+  });
+
+  const recordOutcome = (o: ItemOutcome) => {
+    setOutcomes((prev) => ({ ...prev, [o.id]: o }));
+    if (phase === "slides") engagement.record("checkpoint_answer", { item: o.id, correct: o.correct, revealed: o.revealed });
+  };
+
+  /** Coming back after a pause: a short review question from a check-in already answered. */
+  function comeBack() {
+    engagement.resume();
+    const answered = lesson.slides
+      .slice(0, index + 1)
+      .flatMap((s) => s.checkpoint ?? [])
+      .filter((item): item is NumericItemView => item.kind === "numeric" && Boolean(outcomes[item.id]));
+    const pick = answered.at(-1);
+    if (pick) {
+      setReview({ ...pick, id: `review-${pick.id}-${Date.now()}` });
+      speak(t.engagement.reviewIntro);
+    } else {
+      speak(slide.narration);
+    }
+  }
 
   // Safety: do not continue the lesson (CLAUDE.md §7.2).
   if (safetyMessage) {
@@ -91,7 +128,42 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: Play
   }
 
   if (phase === "exit") {
-    return <ExitTicket lessonId={lesson.id} exit={lesson.exit} />;
+    return <ExitTicket lessonId={lesson.id} exit={lesson.exit} onFinished={engagement.finish} />;
+  }
+
+  if (engagement.paused) {
+    return (
+      <section role="alertdialog" aria-labelledby="still-there" className="flex flex-col gap-4 rounded-xl border-2 border-blue-700 p-6" data-testid="still-there">
+        <h1 id="still-there" className="text-3xl font-bold">
+          {t.engagement.stillThere}
+        </h1>
+        <p className="text-lg">{t.engagement.pausedAt.replace("{n}", String(slide.no))}</p>
+        <button type="button" onClick={comeBack} className="min-h-11 self-start rounded-lg bg-blue-700 px-6 text-lg font-semibold text-white">
+          {t.engagement.back}
+        </button>
+      </section>
+    );
+  }
+
+  if (review) {
+    return (
+      <section className="flex flex-col gap-4 rounded-xl border-2 border-blue-700 p-6" data-testid="review">
+        <h1 className="text-3xl font-bold">{t.engagement.reviewTitle}</h1>
+        <p className="text-lg">{t.engagement.reviewIntro}</p>
+        <NumericCheck item={review} done={outcomes[review.id]} onDone={recordOutcome} />
+        <button
+          type="button"
+          disabled={!outcomes[review.id]}
+          onClick={() => {
+            setReview(null);
+            speak(slide.narration);
+          }}
+          className="min-h-11 self-start rounded-lg bg-blue-700 px-6 font-semibold text-white disabled:opacity-50"
+        >
+          {t.engagement.continue}
+        </button>
+      </section>
+    );
   }
 
   return (
@@ -135,7 +207,10 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: Play
         lessonId={lesson.id}
         slideNo={slide.no}
         aiReady={aiReady}
-        onPause={stop}
+        onPause={() => {
+          stop();
+          engagement.record("question");
+        }}
         onResume={() => speak(slide.narration)}
         speak={speak}
         onSafety={(message) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 const subscribe = () => () => {};
 const isSupported = () => typeof window !== "undefined" && "speechSynthesis" in window;
@@ -22,10 +22,14 @@ function pickVoice(): SpeechSynthesisVoice | null {
 export function useNarration() {
   const supported = useSyncExternalStore(subscribe, isSupported, () => false);
   const [speaking, setSpeaking] = useState(false);
+  // Refs so the engagement tracker can read the latest values on every tick.
+  const startedAtRef = useRef<number | null>(null);
+  const speakingRef = useRef(false);
 
   const stop = useCallback(() => {
     if (!isSupported()) return;
     window.speechSynthesis.cancel();
+    speakingRef.current = false;
     setSpeaking(false);
   }, []);
 
@@ -38,9 +42,19 @@ export function useNarration() {
     u.rate = 0.95;
     const voice = pickVoice();
     if (voice) u.voice = voice;
-    u.onstart = () => setSpeaking(true);
-    u.onend = () => setSpeaking(false);
-    u.onerror = () => setSpeaking(false);
+    u.onstart = () => {
+      startedAtRef.current = Date.now();
+      speakingRef.current = true;
+      setSpeaking(true);
+    };
+    u.onend = () => {
+      speakingRef.current = false;
+      setSpeaking(false);
+    };
+    u.onerror = () => {
+      speakingRef.current = false;
+      setSpeaking(false);
+    };
     synth.speak(u);
   }, []);
 
@@ -49,5 +63,5 @@ export function useNarration() {
     if (isSupported()) window.speechSynthesis.cancel();
   }, []);
 
-  return { supported, speaking, speak, stop };
+  return { supported, speaking, speak, stop, startedAtRef, speakingRef };
 }
