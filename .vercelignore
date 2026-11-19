@@ -1,0 +1,8 @@
+# Never upload local secrets or test output when deploying with the Vercel CLI.
+.env*
+!.env.example
+node_modules
+.next
+test-results
+playwright-report
+supabase/.temp
