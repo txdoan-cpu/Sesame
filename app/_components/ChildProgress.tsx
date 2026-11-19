@@ -1,7 +1,7 @@
 import type en from "@/messages/en.json";
 import type { Lang } from "@/lib/i18n";
 import type { StrandWithOutcomes, MisconceptionInfo } from "@/lib/curriculum";
-import type { ChildView, NotificationView, RewardRuleView } from "@/lib/portal";
+import type { ChildView, NotificationView, RationaleView, RewardRuleView } from "@/lib/portal";
 import type { SharingItem } from "@/lib/sharing";
 import type { WeeklySummary } from "@/lib/weekly";
 import { OutcomeBoard } from "./OutcomeBoard";
@@ -17,9 +17,53 @@ type Props = {
   /** Parent's safety alerts about this child; null on the learner's preview (they cannot read them). */
   safetyAlerts: NotificationView[] | null;
   week: WeeklySummary;
+  rationale: RationaleView | null;
   t: PortalMessages;
   lang: Lang;
 };
+
+/** Proposal's rationale card: what was noticed → what the lesson does → which criteria it meets. */
+function RationaleCard({ rationale, t, lang }: { rationale: RationaleView; t: PortalMessages; lang: Lang }) {
+  const r = t.rationale;
+  return (
+    <section aria-labelledby="h-why" className={cardClass} data-testid="rationale">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 id="h-why" className="text-xl font-semibold">
+          {r.title}
+        </h2>
+        <span className="rounded-full bg-green-700 px-3 text-sm font-semibold text-white" data-testid="fit-score">
+          {fill(r.fit, { score: rationale.fitScore })}
+        </span>
+      </div>
+      <p>{fill(r.intro, { outcome: rationale.outcome })}</p>
+      <ul className="flex flex-col gap-3">
+        {rationale.rows.map((row, i) => (
+          <li key={i} className="flex flex-col gap-1 rounded-lg bg-zinc-100 p-3 dark:bg-zinc-900" data-testid="rationale-row">
+            <p>
+              <span className="font-semibold">{r.signal}:</span> {row.signal[lang]}
+            </p>
+            <p>
+              <span className="font-semibold">{r.method}:</span> {row.method[lang]}
+            </p>
+            <p className="flex flex-wrap gap-1">
+              {row.criteria.map((c) => (
+                <span key={c} className="rounded-full border-2 border-zinc-400 px-2 text-sm">
+                  {c} · {r.criteria[c as keyof typeof r.criteria]}
+                </span>
+              ))}
+            </p>
+          </li>
+        ))}
+      </ul>
+      {rationale.hidden > 0 && (
+        <p className="italic" data-testid="rationale-hidden">
+          {fill(r.hidden, { n: rationale.hidden })}
+        </p>
+      )}
+      <p className="text-base text-zinc-700 dark:text-zinc-300">{r.fitNote}</p>
+    </section>
+  );
+}
 
 /** The weekly report, live: attendance (locked), active time, outcomes if shared. */
 function ThisWeek({ week, t }: { week: WeeklySummary; t: PortalMessages }) {
@@ -80,12 +124,13 @@ function SharedSection({
   );
 }
 
-export function ChildProgress({ view, rewards, curriculum, misconceptionInfo, safetyAlerts, week, t, lang }: Props) {
+export function ChildProgress({ view, rewards, curriculum, misconceptionInfo, safetyAlerts, week, rationale, t, lang }: Props) {
   const status = view.outcomeStatus ? Object.fromEntries(view.outcomeStatus.map((o) => [o.outcome_code, o.status])) : {};
 
   return (
     <div className="flex flex-col gap-5">
       <ThisWeek week={week} t={t} />
+      {rationale && <RationaleCard rationale={rationale} t={t} lang={lang} />}
       <SharedSection item="attendance" sharing={view.sharing} t={t}>
         {view.attendance.length === 0 ? (
           <p>{t.attendanceEmpty}</p>

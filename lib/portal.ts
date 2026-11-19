@@ -9,6 +9,8 @@ import { sortSlots, type Slot } from "@/lib/schedule";
 import type { OutcomeStatusKind } from "@/lib/learner-profile";
 import { weekStart } from "@/lib/time";
 import { buildWeeklySummary, type WeeklySummary } from "@/lib/weekly";
+import { getLessonForOutcome } from "@/lib/lesson/registry";
+import { fitScore } from "@/lib/lesson/fit";
 
 /**
  * What a parent may see about a child (CLAUDE.md §6, §7.3). Everything about
@@ -231,4 +233,38 @@ export async function getThisWeek(learnerId: string, at?: Date): Promise<WeeklyS
     rewards: rewards.map((r) => ({ reward_text: r.reward_text, achieved: r.progress.achieved, total: r.progress.total, status: r.status })),
     outcomesAchieved,
   });
+}
+
+export type RationaleView = {
+  outcome: string;
+  lessonTitle: string;
+  fitScore: number;
+  gatePassed: boolean;
+  rows: { criteria: string[]; signal: { en: string; vi: string }; method: { en: string; vi: string } }[];
+  /** Rows not shown because they rest on something the learner keeps private. */
+  hidden: number;
+};
+
+/**
+ * "Why this lesson" card for a child (proposal: rationale card). Reasons based
+ * on mastery follow outcome_status sharing; reasons based on mistakes or math
+ * anxiety follow misconceptions sharing (private by default).
+ */
+export async function getRationale(learnerId: string, sharing: SharingState): Promise<RationaleView | null> {
+  const lesson = getLessonForOutcome("8PR2");
+  const r = lesson?.rationale;
+  if (!lesson || !r) return null;
+  const visible = r.rows.filter((row) => row.requires === null || sharing[row.requires].shared);
+  return {
+    outcome: lesson.outcome_code,
+    lessonTitle: lesson.title,
+    fitScore: fitScore(r.criteria_scores),
+    gatePassed: r.gate_passed,
+    rows: visible.map((row) => ({
+      criteria: row.criteria,
+      signal: { en: row.signal_en, vi: row.signal_vi },
+      method: { en: row.method_en, vi: row.method_vi },
+    })),
+    hidden: r.rows.length - visible.length,
+  };
 }

@@ -4,7 +4,7 @@ import { ChildProgress } from "@/app/_components/ChildProgress";
 import { getCurriculum, getMisconceptionInfo } from "@/lib/curriculum";
 import { getLang } from "@/lib/lang";
 import { parentMessages } from "@/lib/i18n";
-import { getChildView, getMyNotifications, getRewardRules, getThisWeek, requireLinkedChild } from "@/lib/portal";
+import { getChildView, getMyNotifications, getRationale, getRewardRules, getThisWeek, requireLinkedChild } from "@/lib/portal";
 import en from "@/messages/en.json";
 import { ChildHeader } from "./ChildHeader";
 
@@ -33,6 +33,7 @@ async function Progress({ params }: { params: Promise<{ id: string }> }) {
     getMyNotifications(),
     getThisWeek(id),
   ]);
+  const rationale = await getRationale(id, view.sharing);
   const safetyAlerts = notifications.filter((n) => n.type === "safety" && n.payload.learner_id === id);
 
   return (
@@ -45,6 +46,7 @@ async function Progress({ params }: { params: Promise<{ id: string }> }) {
         misconceptionInfo={misconceptionInfo}
         safetyAlerts={safetyAlerts}
         week={week}
+        rationale={rationale}
         t={t.portal}
         lang={lang}
       />

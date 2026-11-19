@@ -236,6 +236,26 @@
       "outcomes": "Mục tiêu đạt được tuần này: {list}",
       "noOutcomes": "Tuần này chưa đạt thêm mục tiêu nào.",
       "note": "Thời gian vắng mặt không bao giờ được tính vào tiến độ hay phần thưởng."
+    },
+    "rationale": {
+      "title": "Vì sao chọn bài này",
+      "intro": "Cách chọn bài học {outcome} cho con: hệ thống nhận thấy điều gì, và bài học làm gì cho điều đó.",
+      "signal": "Điều nhận thấy",
+      "method": "Bài học làm gì",
+      "fit": "Mức phù hợp sư phạm: {score}/100",
+      "fitNote": "Chấm theo 9 tiêu chí giảng dạy (bản demo do người soạn bài tự chấm). Cần từ 75 điểm, và đúng, an toàn, thì bài học mới được giao.",
+      "hidden": "Còn {n} lý do khác dựa trên những điều con đang giữ riêng.",
+      "criteria": {
+        "A1": "Khớp với mục tiêu học",
+        "A2": "Đủ các chỉ báo",
+        "B1": "Bắt đầu đúng trình độ",
+        "B2": "Xử lý lỗi hay mắc",
+        "B3": "Mức hỗ trợ phù hợp",
+        "B4": "Ngôn ngữ, cảm xúc, khả năng tiếp cận",
+        "C1": "Cách dạy hợp nội dung",
+        "D1": "Slide và lời đọc ăn khớp",
+        "E1": "Kiểm tra và phản hồi"
+      }
     }
   }
 }

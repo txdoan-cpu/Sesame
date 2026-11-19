@@ -10,7 +10,9 @@
       "prompt": "Solve $x + 5 = 9$",
       "equation": "x + 5 = 9",
       "answer": 4,
-      "hints": ["What number plus 5 makes 9?"],
+      "hints": [
+        "What number plus 5 makes 9?"
+      ],
       "correct_feedback": "Yes, x = 4."
     },
     {
@@ -19,7 +21,9 @@
       "prompt": "Solve $3x = 12$",
       "equation": "3x = 12",
       "answer": 4,
-      "hints": ["3 times what number makes 12?"],
+      "hints": [
+        "3 times what number makes 12?"
+      ],
       "correct_feedback": "Yes, x = 4."
     },
     {
@@ -28,7 +32,9 @@
       "prompt": "Solve $2x + 1 = 7$",
       "equation": "2x + 1 = 7",
       "answer": 3,
-      "hints": ["Take away 1 from both sides first."],
+      "hints": [
+        "Take away 1 from both sides first."
+      ],
       "correct_feedback": "Yes, x = 3."
     },
     {
@@ -37,7 +43,9 @@
       "prompt": "Solve $x/2 = 5$",
       "equation": "x/2 = 5",
       "answer": 10,
-      "hints": ["Half of what number is 5?"],
+      "hints": [
+        "Half of what number is 5?"
+      ],
       "correct_feedback": "Yes, x = 10."
     }
   ],
@@ -47,8 +55,12 @@
       "title": "Warm-up",
       "body_md": "You already know how to do these.\n\n- $4x = 20$\n- $x + 7 = 12$",
       "narration": "Welcome back! Let's start with two quick ones. You have solved equations like these before. Take your time, and type what x is for each one.",
-      "visual": { "type": "none" },
-      "indicators": ["PR2.3"],
+      "visual": {
+        "type": "none"
+      },
+      "indicators": [
+        "PR2.3"
+      ],
       "checkpoint": {
         "items": [
           {
@@ -57,7 +69,11 @@
             "prompt": "Solve $4x = 20$",
             "equation": "4x = 20",
             "answer": 5,
-            "hints": ["4 times what number makes 20?", "Divide both sides by 4.", "20 divided by 4 is 5."],
+            "hints": [
+              "4 times what number makes 20?",
+              "Divide both sides by 4.",
+              "20 divided by 4 is 5."
+            ],
             "correct_feedback": "Yes! x = 5. Four fives make twenty."
           },
           {
@@ -66,7 +82,11 @@
             "prompt": "Solve $x + 7 = 12$",
             "equation": "x + 7 = 12",
             "answer": 5,
-            "hints": ["What number plus 7 makes 12?", "Take away 7 from both sides.", "12 minus 7 is 5."],
+            "hints": [
+              "What number plus 7 makes 12?",
+              "Take away 7 from both sides.",
+              "12 minus 7 is 5."
+            ],
             "correct_feedback": "Yes! x = 5. Two for two!"
           }
         ]
@@ -77,8 +97,14 @@
       "title": "The equals sign means balanced",
       "body_md": "**=** does not mean \"the answer is\".\n\n**=** means both sides weigh the same.\n\n- Do something to one side? Do the same to the other side.",
       "narration": "Picture a balance scale. On one side we have x plus 2. On the other side we have 5. The scale is level, so both sides weigh the same. That is what the equals sign really means. If you change one side, you have to change the other side the same way. Then it stays balanced.",
-      "visual": { "type": "balance", "left": "x + 2", "right": "5" },
-      "indicators": ["PR2.1"],
+      "visual": {
+        "type": "balance",
+        "left": "x + 2",
+        "right": "5"
+      },
+      "indicators": [
+        "PR2.1"
+      ],
       "checkpoint": {
         "items": [
           {
@@ -118,11 +144,21 @@
       "narration": "Picture your local rink here in St. John's. Skate rental is four dollars, plus three dollars for every hour. You paid nineteen dollars. How many hours did you skate? Let's turn that story into a balance. On one side: three x plus four. On the other: nineteen. First, take away four from both sides. That leaves three x equals fifteen. Then divide both sides by three. So x is five. You skated for five hours. Let's check: three times five is fifteen, plus four is nineteen. It works!",
       "visual": {
         "type": "steps",
-        "lines": ["3x + 4 = 19", "3x + 4 - 4 = 19 - 4", "3x = 15", "3x / 3 = 15 / 3", "x = 5"],
+        "lines": [
+          "3x + 4 = 19",
+          "3x + 4 - 4 = 19 - 4",
+          "3x = 15",
+          "3x / 3 = 15 / 3",
+          "x = 5"
+        ],
         "solution": 5,
         "check": "3(5) + 4 = 19"
       },
-      "indicators": ["PR2.3", "PR2.6", "PR2.2"]
+      "indicators": [
+        "PR2.3",
+        "PR2.6",
+        "PR2.2"
+      ]
     },
     {
       "no": 4,
@@ -131,11 +167,18 @@
       "narration": "Now you help. This one is five x minus seven equals eighteen. We added seven to both sides, so five x equals twenty-five. What is the last step? What does x equal?",
       "visual": {
         "type": "steps",
-        "lines": ["5x - 7 = 18", "5x - 7 + 7 = 18 + 7", "5x = 25", "x = 5"],
+        "lines": [
+          "5x - 7 = 18",
+          "5x - 7 + 7 = 18 + 7",
+          "5x = 25",
+          "x = 5"
+        ],
         "solution": 5,
         "hidden_line": 3
       },
-      "indicators": ["PR2.3"],
+      "indicators": [
+        "PR2.3"
+      ],
       "checkpoint": {
         "items": [
           {
@@ -159,8 +202,16 @@
       "title": "Algebra tiles: 2(x + 3) = 14",
       "body_md": "$2(x + 3)$ means **2 groups** of $x + 3$.\n\n- Each group has one x-tile and three 1-tiles.\n- The other side has fourteen 1-tiles.",
       "narration": "Let's use algebra tiles. Two times the bracket x plus three means two groups. Each group has one long x tile and three small one tiles. On the other side there are fourteen one tiles. Count all the small tiles on the left. That tells us what two x plus what number equals fourteen.",
-      "visual": { "type": "tiles", "groups": 2, "units_per_group": 3, "right_units": 14 },
-      "indicators": ["PR2.1", "PR2.4"],
+      "visual": {
+        "type": "tiles",
+        "groups": 2,
+        "units_per_group": 3,
+        "right_units": 14
+      },
+      "indicators": [
+        "PR2.1",
+        "PR2.4"
+      ],
       "checkpoint": {
         "items": [
           {
@@ -169,7 +220,11 @@
             "prompt": "How many 1-tiles are on the left side?",
             "expression": "2 * 3",
             "answer": 6,
-            "hints": ["Count the small squares in one group first.", "Each group has 3. There are 2 groups.", "2 groups of 3 is 6."],
+            "hints": [
+              "Count the small squares in one group first.",
+              "Each group has 3. There are 2 groups.",
+              "2 groups of 3 is 6."
+            ],
             "correct_feedback": "Yes, 6! So 2(x + 3) = 14 is the same as 2x + 6 = 14. Then 2x = 8, and x = 4."
           }
         ]
@@ -184,11 +239,30 @@
         "type": "compare",
         "equation": "2(x + 3) = 14",
         "people": [
-          { "name": "Maya", "lines": ["2x + 6 = 14", "2x = 8", "x = 4"], "answer": 4 },
-          { "name": "Liam", "lines": ["2x + 3 = 14", "2x = 11", "x = 5.5"], "answer": 5.5 }
+          {
+            "name": "Maya",
+            "lines": [
+              "2x + 6 = 14",
+              "2x = 8",
+              "x = 4"
+            ],
+            "answer": 4
+          },
+          {
+            "name": "Liam",
+            "lines": [
+              "2x + 3 = 14",
+              "2x = 11",
+              "x = 5.5"
+            ],
+            "answer": 5.5
+          }
         ]
       },
-      "indicators": ["PR2.4", "PR2.5"],
+      "indicators": [
+        "PR2.4",
+        "PR2.5"
+      ],
       "checkpoint": {
         "items": [
           {
@@ -228,10 +302,19 @@
       "narration": "This one has negative numbers. Negative three x plus five equals negative ten. Take away five from both sides. Negative ten minus five is negative fifteen. Then divide both sides by negative three. A negative divided by a negative is positive, so x is five. Now let's check it. Put five back in for x.",
       "visual": {
         "type": "steps",
-        "lines": ["-3x + 5 = -10", "-3x + 5 - 5 = -10 - 5", "-3x = -15", "-3x / -3 = -15 / -3", "x = 5"],
+        "lines": [
+          "-3x + 5 = -10",
+          "-3x + 5 - 5 = -10 - 5",
+          "-3x = -15",
+          "-3x / -3 = -15 / -3",
+          "x = 5"
+        ],
         "solution": 5
       },
-      "indicators": ["PR2.3", "PR2.2"],
+      "indicators": [
+        "PR2.3",
+        "PR2.2"
+      ],
       "checkpoint": {
         "items": [
           {
@@ -240,7 +323,11 @@
             "prompt": "Check it: what is $-3(5) + 5$?",
             "expression": "-3(5) + 5",
             "answer": -10,
-            "hints": ["First work out -3 times 5.", "-3 times 5 is -15. Now add 5.", "-15 + 5 = -10."],
+            "hints": [
+              "First work out -3 times 5.",
+              "-3 times 5 is -15. Now add 5.",
+              "-15 + 5 = -10."
+            ],
             "correct_feedback": "Yes, -10! That matches the right side, so x = 5 is correct."
           }
         ]
@@ -251,8 +338,13 @@
       "title": "Practice",
       "body_md": "Three to try. Use a hint if you need one.\n\n- $2x + 9 = 1$\n- $x/3 + 4 = 6$\n- $4(x - 2) = 12$",
       "narration": "Now you try three on your own. If you get stuck, ask for a hint. Each hint gives you a little more help. There is no rush.",
-      "visual": { "type": "none" },
-      "indicators": ["PR2.3", "PR2.4"],
+      "visual": {
+        "type": "none"
+      },
+      "indicators": [
+        "PR2.3",
+        "PR2.4"
+      ],
       "checkpoint": {
         "items": [
           {
@@ -302,7 +394,9 @@
       "title": "Show what you know",
       "body_md": "Four quick questions.\n\n- Three are tap to answer.\n- One is in your own words.\n\nThis is not a test for marks. It helps us plan your next lesson.",
       "narration": "Great work today. Last part. Four quick questions. Three of them, you just tap an answer. For the last one, explain in your own words. This is not for marks. It just helps plan your next lesson.",
-      "visual": { "type": "none" },
+      "visual": {
+        "type": "none"
+      },
       "indicators": []
     }
   ],
@@ -316,10 +410,33 @@
         "indicator": "PR2.3",
         "skill": "8PR2.two_step",
         "options": [
-          { "id": "a", "text": "x = 5", "value": 5, "correct": true },
-          { "id": "b", "text": "x = 6.5", "value": 6.5, "correct": false, "misconception": "M3" },
-          { "id": "c", "text": "x = 2.75", "value": 2.75, "correct": false, "misconception": "M4" },
-          { "id": "d", "text": "x = 5.75", "value": 5.75, "correct": false, "misconception": "M1" }
+          {
+            "id": "a",
+            "text": "x = 5",
+            "value": 5,
+            "correct": true
+          },
+          {
+            "id": "b",
+            "text": "x = 6.5",
+            "value": 6.5,
+            "correct": false,
+            "misconception": "M3"
+          },
+          {
+            "id": "c",
+            "text": "x = 2.75",
+            "value": 2.75,
+            "correct": false,
+            "misconception": "M4"
+          },
+          {
+            "id": "d",
+            "text": "x = 5.75",
+            "value": 5.75,
+            "correct": false,
+            "misconception": "M1"
+          }
         ]
       },
       {
@@ -329,9 +446,26 @@
         "indicator": "PR2.4",
         "skill": "8PR2.distributive",
         "options": [
-          { "id": "a", "text": "x = 5.5", "value": 5.5, "correct": false, "misconception": "M2" },
-          { "id": "b", "text": "x = 3", "value": 3, "correct": true },
-          { "id": "c", "text": "x = 13", "value": 13, "correct": false, "misconception": "M3" }
+          {
+            "id": "a",
+            "text": "x = 5.5",
+            "value": 5.5,
+            "correct": false,
+            "misconception": "M2"
+          },
+          {
+            "id": "b",
+            "text": "x = 3",
+            "value": 3,
+            "correct": true
+          },
+          {
+            "id": "c",
+            "text": "x = 13",
+            "value": 13,
+            "correct": false,
+            "misconception": "M3"
+          }
         ]
       },
       {
@@ -340,10 +474,29 @@
         "indicator": "PR2.1",
         "skill": "8PR2.two_step",
         "options": [
-          { "id": "a", "text": "Nothing. The right side is the answer.", "correct": false, "misconception": "M5" },
-          { "id": "b", "text": "Divide only the right side by 3.", "correct": false, "misconception": "M4" },
-          { "id": "c", "text": "Take away 5 from the right side too, to keep it balanced.", "correct": true },
-          { "id": "d", "text": "Add 5 to the right side.", "correct": false, "misconception": "M3" }
+          {
+            "id": "a",
+            "text": "Nothing. The right side is the answer.",
+            "correct": false,
+            "misconception": "M5"
+          },
+          {
+            "id": "b",
+            "text": "Divide only the right side by 3.",
+            "correct": false,
+            "misconception": "M4"
+          },
+          {
+            "id": "c",
+            "text": "Take away 5 from the right side too, to keep it balanced.",
+            "correct": true
+          },
+          {
+            "id": "d",
+            "text": "Add 5 to the right side.",
+            "correct": false,
+            "misconception": "M3"
+          }
         ]
       }
     ],
@@ -358,5 +511,96 @@
         "equal on both"
       ]
     }
+  },
+  "rationale": {
+    "criteria_scores": {
+      "A1": 3,
+      "A2": 3,
+      "B1": 3,
+      "B2": 3,
+      "B3": 3,
+      "B4": 2,
+      "C1": 3,
+      "D1": 2,
+      "E1": 2
+    },
+    "gate_passed": true,
+    "rows": [
+      {
+        "requires": "outcome_status",
+        "criteria": [
+          "B1"
+        ],
+        "signal_en": "One-step equations are already strong (85%).",
+        "signal_vi": "Phương trình một bước đã vững (85%).",
+        "method_en": "A two-question warm-up for an early win, then straight on to two-step equations. No re-teaching.",
+        "method_vi": "Khởi động bằng 2 câu dễ để con có thành công sớm, rồi vào ngay phương trình hai bước. Không dạy lại phần đã biết."
+      },
+      {
+        "requires": "outcome_status",
+        "criteria": [
+          "B3",
+          "C1"
+        ],
+        "signal_en": "Two-step equations are weak (45%).",
+        "signal_vi": "Phương trình hai bước còn yếu (45%).",
+        "method_en": "A balance scale first, then a fully worked example, then one with the last step left for the learner.",
+        "method_vi": "Bắt đầu bằng cân thăng bằng, rồi một ví dụ giải đầy đủ, rồi một ví dụ để con tự làm bước cuối."
+      },
+      {
+        "requires": "misconceptions",
+        "criteria": [
+          "B2",
+          "C1"
+        ],
+        "signal_en": "Often multiplies only the first term in brackets (mistake M2).",
+        "signal_vi": "Hay chỉ nhân số đầu tiên trong ngoặc (lỗi M2).",
+        "method_en": "Algebra tiles for 2(x + 3), then \"Who's right?\": comparing a correct and an incorrect solution.",
+        "method_vi": "Dùng algebra tiles cho 2(x + 3), rồi bài \"Ai đúng?\": so sánh một lời giải đúng và một lời giải sai."
+      },
+      {
+        "requires": "misconceptions",
+        "criteria": [
+          "B2",
+          "E1"
+        ],
+        "signal_en": "Sign errors with negative numbers (mistake M3).",
+        "signal_vi": "Hay sai dấu với số âm (lỗi M3).",
+        "method_en": "A slide just on negatives, with a check by putting the answer back in.",
+        "method_vi": "Một slide riêng về số âm, có bước kiểm tra bằng cách thế đáp án vào lại."
+      },
+      {
+        "requires": "misconceptions",
+        "criteria": [
+          "B4"
+        ],
+        "signal_en": "Some worry about math (moderate math anxiety).",
+        "signal_vi": "Có phần lo lắng khi học toán (mức vừa).",
+        "method_en": "Short slides, hints in three gentle steps, an ungraded final check, and words that praise effort.",
+        "method_vi": "Slide ngắn, gợi ý theo 3 mức nhẹ nhàng, bài kiểm tra cuối không chấm điểm, và lời khen dành cho sự cố gắng."
+      },
+      {
+        "requires": null,
+        "criteria": [
+          "B4",
+          "C1"
+        ],
+        "signal_en": "Likes hockey.",
+        "signal_vi": "Thích khúc côn cầu.",
+        "method_en": "The main example is renting skates at a rink in St. John's.",
+        "method_vi": "Ví dụ chính là thuê giày trượt ở sân băng tại St. John's."
+      },
+      {
+        "requires": null,
+        "criteria": [
+          "B4",
+          "D1"
+        ],
+        "signal_en": "Reads at about a Grade 6 level.",
+        "signal_vi": "Trình độ đọc khoảng lớp 6.",
+        "method_en": "Short sentences, spoken narration with the words always on screen, and slide text that does not just repeat the narration.",
+        "method_vi": "Câu ngắn, có lời đọc và luôn có chữ trên màn hình; chữ trên slide không lặp lại nguyên lời đọc."
+      }
+    ]
   }
 }

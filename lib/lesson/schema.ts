@@ -128,9 +128,28 @@ export const LessonSchema = z.object({
     }),
     mastery_threshold: z.number().min(0).max(1),
   }),
+  rationale: z
+    .object({
+      /** 0–3 per criterion (proposal, Solution 1). Self-assessed by the author for the demo. */
+      criteria_scores: z.record(z.enum(["A1", "A2", "B1", "B2", "B3", "B4", "C1", "D1", "E1"]), z.number().int().min(0).max(3)),
+      gate_passed: z.boolean(),
+      rows: z.array(
+        z.object({
+          /** Sharing item the reason is based on; the row is hidden when the learner keeps it private. */
+          requires: z.enum(["outcome_status", "misconceptions"]).nullable(),
+          criteria: z.array(z.enum(["A1", "A2", "B1", "B2", "B3", "B4", "C1", "D1", "E1"])).min(1),
+          signal_en: z.string(),
+          signal_vi: z.string(),
+          method_en: z.string(),
+          method_vi: z.string(),
+        }),
+      ),
+    })
+    .optional(),
 });
 
 export type Lesson = z.infer<typeof LessonSchema>;
+export type LessonRationale = NonNullable<Lesson["rationale"]>;
 export type Slide = z.infer<typeof SlideSchema>;
 export type CheckItem = z.infer<typeof CheckItemSchema>;
 export type NumericItem = z.infer<typeof NumericItemSchema>;

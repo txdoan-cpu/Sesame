@@ -6,7 +6,7 @@ import { linkClass } from "@/app/_components/styles";
 import { requireRole } from "@/lib/auth/dal";
 import { getCurriculum, getMisconceptionInfo } from "@/lib/curriculum";
 import { learnerMessages } from "@/lib/i18n";
-import { getChildView, getRewardRules, getThisWeek } from "@/lib/portal";
+import { getChildView, getRationale, getRewardRules, getThisWeek } from "@/lib/portal";
 import en from "@/messages/en.json";
 
 export const metadata: Metadata = { title: "What my parent sees — Sesame" };
@@ -37,6 +37,8 @@ async function ParentView() {
     getThisWeek(user.id),
   ]);
 
+  const rationale = await getRationale(user.id, view.sharing);
+
   return (
     <>
       <h1 className="text-3xl font-bold">{t.title}</h1>
@@ -56,6 +58,7 @@ async function ParentView() {
         misconceptionInfo={misconceptionInfo}
         safetyAlerts={null}
         week={week}
+        rationale={rationale}
         t={en.portal}
         lang="en"
       />

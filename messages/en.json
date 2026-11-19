@@ -442,6 +442,26 @@
       "outcomes": "Outcomes reached this week: {list}",
       "noOutcomes": "No new outcomes reached this week.",
       "note": "Away time never counts toward progress or rewards."
+    },
+    "rationale": {
+      "title": "Why this lesson",
+      "intro": "How the lesson for {outcome} was chosen for your child: what we noticed, and what the lesson does about it.",
+      "signal": "What we noticed",
+      "method": "What the lesson does",
+      "fit": "Pedagogical fit: {score}/100",
+      "fitNote": "Scored against 9 teaching criteria (scored by the lesson author for this demo). 75 or more, and correct and safe, is needed before a lesson is given.",
+      "hidden": "{n} more reasons are based on things your child keeps private.",
+      "criteria": {
+        "A1": "Matches the learning outcome",
+        "A2": "Covers every indicator",
+        "B1": "Starts at the right level",
+        "B2": "Tackles known mistakes",
+        "B3": "Right amount of support",
+        "B4": "Language, feelings and access",
+        "C1": "Right way to teach this content",
+        "D1": "Slides and voice work together",
+        "E1": "Checks and feedback"
+      }
     }
   }
 }
