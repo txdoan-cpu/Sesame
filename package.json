@@ -14,7 +14,8 @@
     "demo:reset": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts reset",
     "demo:time-travel": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts time-travel",
     "demo:slot-now": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts slot-now",
-    "demo:testers": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts testers"
+    "demo:testers": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts testers",
+    "demo:video": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo-video.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.10.0",
