@@ -14,6 +14,7 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}` },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
+    { name: "tablet", use: { ...devices["Galaxy Tab S4"] } },
     { name: "phone", use: { ...devices["Pixel 7"] } },
   ],
   webServer: {

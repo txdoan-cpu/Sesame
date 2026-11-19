@@ -77,9 +77,16 @@ export async function deleteUsers(admin: SupabaseClient, ids: string[]): Promise
   await Promise.all(ids.map((id) => admin.auth.admin.deleteUser(id)));
 }
 
+/**
+ * Signs in a test user. Supabase Auth limits sign-ins per IP (about 30 per 5 minutes by
+ * default); a full run on three devices can hit it, so wait and retry instead of failing.
+ */
 export async function signedIn(email: string): Promise<SupabaseClient> {
-  const client = anonClient();
-  const { error } = await client.auth.signInWithPassword({ email, password: TEST_PASSWORD });
-  if (error) throw new Error(`sign in ${email}: ${error.message}`);
-  return client;
+  for (let attempt = 0; ; attempt++) {
+    const client = anonClient();
+    const { error } = await client.auth.signInWithPassword({ email, password: TEST_PASSWORD });
+    if (!error) return client;
+    if (!/rate limit/i.test(error.message) || attempt >= 8) throw new Error(`sign in ${email}: ${error.message}`);
+    await new Promise((r) => setTimeout(r, 20_000));
+  }
 }
