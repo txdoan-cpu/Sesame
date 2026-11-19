@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import demoA from "@/content/profiles/demo-A.json";
 import { LearnerProfileSchema, toLearnerProfileRow } from "@/lib/learner-profile";
 import { adminClient, createFamily, deleteUsers, signedIn, supabaseConfigured, TEST_PASSWORD, type TestFamily } from "./helpers/supabase";
+import { loginLearner } from "./helpers/lesson";
 
 // Round 4: voice/typed questions during the lesson, math check, safety.
 // The server runs with LLM_PROVIDER=mock (see playwright.config.ts).
@@ -177,12 +178,7 @@ test.describe("voice Q&A", () => {
 });
 
 async function startLesson(page: Page, username: string) {
-  await page.goto("/login");
-  const form = page.getByTestId("learner-login");
-  await form.getByLabel("Username").fill(username);
-  await form.getByLabel("Password").fill(TEST_PASSWORD);
-  await form.getByRole("button", { name: "Log in" }).click();
-  await expect(page).toHaveURL(/\/learner$/);
+  await loginLearner(page, username);
   await page.goto("/learner/lesson");
   await page.getByRole("button", { name: "Start lesson" }).click();
   await expect(page.getByTestId("slide-progress")).toHaveText("Slide 1 of 9");

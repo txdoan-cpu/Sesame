@@ -1,7 +1,8 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import demoA from "@/content/profiles/demo-A.json";
 import { LearnerProfileSchema, toLearnerProfileRow } from "@/lib/learner-profile";
-import { adminClient, createFamily, deleteUsers, supabaseConfigured, TEST_PASSWORD, type TestFamily } from "./helpers/supabase";
+import { adminClient, createFamily, deleteUsers, supabaseConfigured, type TestFamily } from "./helpers/supabase";
+import { loginParent, loginLearner } from "./helpers/lesson";
 
 // Round 5 UI: parent portal and learner sharing controls, end to end.
 
@@ -165,20 +166,3 @@ test.describe("parent portal", () => {
   });
 });
 
-async function loginParent(page: Page, email: string) {
-  await page.goto("/login");
-  const form = page.getByTestId("parent-login");
-  await form.getByLabel("Email").fill(email);
-  await form.getByLabel("Password").fill(TEST_PASSWORD);
-  await form.getByRole("button", { name: "Log in" }).click();
-  await expect(page).toHaveURL(/\/parent$/);
-}
-
-async function loginLearner(page: Page, username: string) {
-  await page.goto("/login");
-  const form = page.getByTestId("learner-login");
-  await form.getByLabel("Username").fill(username);
-  await form.getByLabel("Password").fill(TEST_PASSWORD);
-  await form.getByRole("button", { name: "Log in" }).click();
-  await expect(page).toHaveURL(/\/learner$/);
-}

@@ -3,22 +3,32 @@ import { TEST_PASSWORD } from "./supabase";
 
 export const E2E_CRON_SECRET = "e2e-cron-secret";
 
-export async function loginLearner(page: Page, username: string) {
+/**
+ * Logs in through the real login form. Supabase Auth rate-limits sign-ins per IP; when the
+ * form says "Too many tries", wait and submit again instead of failing the test.
+ */
+async function loginWithForm(page: Page, formId: string, fields: Record<string, string>, home: RegExp) {
   await page.goto("/login");
-  const form = page.getByTestId("learner-login");
-  await form.getByLabel("Username").fill(username);
-  await form.getByLabel("Password").fill(TEST_PASSWORD);
-  await form.getByRole("button", { name: "Log in" }).click();
-  await expect(page).toHaveURL(/\/learner$/);
+  const form = page.getByTestId(formId);
+  for (const [label, value] of Object.entries(fields)) await form.getByLabel(label).fill(value);
+  for (let attempt = 0; attempt < 8; attempt++) {
+    await form.getByRole("button", { name: "Log in" }).click();
+    // Either we land on the home page, or the form shows an error.
+    await page.waitForURL(home, { timeout: 15_000 }).catch(() => {});
+    if (home.test(page.url())) return;
+    const tooMany = await form.getByRole("alert").filter({ hasText: "Too many tries" }).isVisible();
+    if (!tooMany) break;
+    await page.waitForTimeout(20_000);
+  }
+  await expect(page).toHaveURL(home);
 }
 
-export async function loginParent(page: Page, email: string) {
-  await page.goto("/login");
-  const form = page.getByTestId("parent-login");
-  await form.getByLabel("Email").fill(email);
-  await form.getByLabel("Password").fill(TEST_PASSWORD);
-  await form.getByRole("button", { name: "Log in" }).click();
-  await expect(page).toHaveURL(/\/parent$/);
+export async function loginLearner(page: Page, username: string, password = TEST_PASSWORD) {
+  await loginWithForm(page, "learner-login", { Username: username, Password: password }, /\/learner$/);
+}
+
+export async function loginParent(page: Page, email: string, password = TEST_PASSWORD) {
+  await loginWithForm(page, "parent-login", { Email: email, Password: password }, /\/parent$/);
 }
 
 export async function answer(page: Page, id: string, value: string) {

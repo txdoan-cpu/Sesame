@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
   adminClient,
   createFamily,
@@ -8,6 +8,7 @@ import {
   TEST_PASSWORD,
   type TestFamily,
 } from "./helpers/supabase";
+import { loginParent } from "./helpers/lesson";
 
 // Round 1 "done when": learner sees only own data; parent sees only linked child.
 // Full UI flow against the real Supabase project with synthetic accounts.
@@ -141,11 +142,3 @@ test("login page fits a phone screen with large tap targets", async ({ page }, t
   }
 });
 
-async function loginParent(page: Page, email: string) {
-  await page.goto("/login");
-  const form = page.getByTestId("parent-login");
-  await form.getByLabel("Email").fill(email);
-  await form.getByLabel("Password").fill(TEST_PASSWORD);
-  await form.getByRole("button", { name: "Log in" }).click();
-  await expect(page).toHaveURL(/\/parent$/);
-}

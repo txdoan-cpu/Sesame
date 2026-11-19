@@ -1,7 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 import demoA from "@/content/profiles/demo-A.json";
 import { LearnerProfileSchema, toLearnerProfileRow } from "@/lib/learner-profile";
-import { adminClient, createFamily, deleteUsers, supabaseConfigured, TEST_PASSWORD, type TestFamily } from "./helpers/supabase";
+import { adminClient, createFamily, deleteUsers, supabaseConfigured, type TestFamily } from "./helpers/supabase";
+import { loginLearner } from "./helpers/lesson";
 
 // Round 3 "done when": finishing the lesson updates outcome_status and mastery.
 
@@ -152,15 +153,6 @@ test.describe("lesson player", () => {
     await expectSlide(page, 1, "Warm-up");
   });
 });
-
-async function loginLearner(page: Page, username: string) {
-  await page.goto("/login");
-  const form = page.getByTestId("learner-login");
-  await form.getByLabel("Username").fill(username);
-  await form.getByLabel("Password").fill(TEST_PASSWORD);
-  await form.getByRole("button", { name: "Log in" }).click();
-  await expect(page).toHaveURL(/\/learner$/);
-}
 
 async function expectSlide(page: Page, n: number, title: string) {
   await expect(page.getByTestId("slide-progress")).toHaveText(`Slide ${n} of 9`);
