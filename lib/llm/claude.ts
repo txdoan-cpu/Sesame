@@ -66,7 +66,18 @@ export async function claudeGenerate(req: LlmRequest): Promise<LlmResult> {
       model,
       max_tokens: req.maxTokens,
       system: req.system,
-      messages: [{ role: "user", content: req.user }],
+      messages: [
+        {
+          role: "user",
+          content: [
+            ...(req.images ?? []).map((img) => ({
+              type: "image" as const,
+              source: { type: "base64" as const, media_type: img.mimeType as "image/png" | "image/jpeg" | "image/webp" | "image/gif", data: img.base64 },
+            })),
+            { type: "text" as const, text: req.user },
+          ],
+        },
+      ],
     });
     if (response.stop_reason === "refusal") {
       return { ok: false, provider, model, code: "refusal", error: "The model declined to answer." };

@@ -1,0 +1,20 @@
+{
+  "id": "rubric_r",
+  "title": "Rubric R: reference materials",
+  "scale": "Each criterion is scored 0-3: 0 not met, 1 weak, 2 good, 3 exemplary.",
+  "select_rule": "Select a material only if every gate scores at least 2 and the weighted mean is at least 2.0 out of 3. Keep the top 2-3 per outcome.",
+  "gate_min": 2,
+  "select_min_weighted_mean": 2.0,
+  "criteria": [
+    { "id": "R1", "gate": true, "weight": 20, "name": "Matches the outcome", "check": "Does the material teach the outcome's content and its action verb (for example 'solve', 'model', 'explain')?" },
+    { "id": "R2", "gate": false, "weight": 10, "name": "Bloom level matches", "check": "Is the thinking level of the material (remember, understand, apply, analyse, evaluate, create) the same as the outcome's?" },
+    { "id": "R3", "gate": true, "weight": 15, "name": "Accurate", "check": "Is every fact, example and worked answer correct? Any mathematical error scores 0 or 1." },
+    { "id": "R4", "gate": false, "weight": 15, "name": "Uses known prerequisites", "check": "Does it rely only on the listed prerequisites, or review what else it needs?" },
+    { "id": "R5", "gate": true, "weight": 10, "name": "Trusted source", "check": "Is the source a provincial Department of Education, a provincially authorised resource, peer-reviewed open educational resource, or a journal? Unknown blogs and anonymous sites score 0-1." },
+    { "id": "R6", "gate": false, "weight": 5, "name": "Canadian context", "check": "Does it use Canadian contexts, units, spelling or curriculum language?" },
+    { "id": "R7", "gate": false, "weight": 10, "name": "Easy to turn into slides", "check": "Is it organised in short, clear steps or examples that can become slides and narration?" },
+    { "id": "R8", "gate": false, "weight": 5, "name": "Surfaces misconceptions", "check": "Does it name, show or address common mistakes for this outcome?" },
+    { "id": "R9", "gate": true, "weight": 5, "name": "Licence allows use", "check": "Does the stated licence allow use in lessons (Creative Commons, public domain, public government document, or a justified fair dealing note)?" },
+    { "id": "R10", "gate": false, "weight": 5, "name": "Accessible", "check": "Is it readable for the learners: plain language, clear layout, text alternatives for images?" }
+  ]
+}

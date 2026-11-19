@@ -64,7 +64,12 @@ async function callGemini(model: string, key: string, req: LlmRequest): Promise<
       signal: AbortSignal.timeout(req.timeoutMs ?? 20_000),
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: req.system }] },
-        contents: [{ role: "user", parts: [{ text: req.user }] }],
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: req.user }, ...(req.images ?? []).map((img) => ({ inlineData: { mimeType: img.mimeType, data: img.base64 } }))],
+          },
+        ],
         generationConfig: {
           // Newer Gemini models spend output tokens on thinking, so leave headroom.
           maxOutputTokens: Math.max(req.maxTokens, 2048),

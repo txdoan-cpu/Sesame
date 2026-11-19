@@ -41,6 +41,8 @@ export type LlmRequest = {
   /** Ask the provider for a JSON object (we still parse defensively). */
   json: boolean;
   timeoutMs?: number;
+  /** Optional images sent with the user message (e.g. a scanned worksheet). */
+  images?: { mimeType: string; base64: string }[];
 };
 
 export type LlmResult =

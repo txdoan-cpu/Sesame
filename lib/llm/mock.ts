@@ -11,6 +11,8 @@ import type { HealthResult, LlmRequest, LlmResult } from "./types";
  */
 export async function mockGenerate(req: LlmRequest): Promise<LlmResult> {
   const base = { ok: true as const, provider: "mock", model: "mock-1" };
+  if (req.user.includes('"task":"rubric_r"')) return { ...base, text: mockRubric(req.user) };
+  if (req.images?.length && req.user.startsWith("Transcribe")) return { ...base, text: "Solve 2x + 3 = 11. Subtract 3 from both sides, then divide by 2." };
   let payload: { question?: string; slide?: { title?: string; indicators?: string[] }; exit_ticket_equations?: string[] } = {};
   try {
     payload = JSON.parse(req.user) as typeof payload;
@@ -71,4 +73,40 @@ export async function mockGenerate(req: LlmRequest): Promise<LlmResult> {
 
 export async function mockHealthCheck(): Promise<HealthResult> {
   return { ok: true, provider: "mock", model: "mock-1", reply: "Mock provider connected." };
+}
+
+/**
+ * Rubric R stand-in: everything 3, except predictable cases tests rely on:
+ * "WRONG" in the text → R3 = 1 (inaccurate); licence "other" without a note → R9 = 1;
+ * "OFF-TOPIC" → R1 = 1; no source URL → R5 = 2.
+ */
+function mockRubric(user: string): string {
+  type P = { material?: { text?: string; licence?: string; licence_note?: string | null; source_url?: string | null } };
+  let p: P = {};
+  try {
+    p = JSON.parse(user) as P;
+  } catch {
+    // keep defaults
+  }
+  const m = p.material ?? {};
+  const text = m.text ?? "";
+  const scores: Record<string, number> = { R1: 3, R2: 3, R3: 3, R4: 3, R5: 3, R6: 2, R7: 3, R8: 2, R9: 3, R10: 3 };
+  const reasons: Record<string, string> = {};
+  if (text.includes("WRONG")) {
+    scores.R3 = 1;
+    reasons.R3 = "A worked answer is wrong.";
+  }
+  if (text.includes("OFF-TOPIC")) {
+    scores.R1 = 1;
+    reasons.R1 = "The material is about a different topic.";
+  }
+  if (m.licence === "other" && !m.licence_note) {
+    scores.R9 = 1;
+    reasons.R9 = "The licence is unclear.";
+  }
+  if (!m.source_url) {
+    scores.R5 = 2;
+    reasons.R5 = "No source link; uploaded by a teacher.";
+  }
+  return JSON.stringify({ scores, reasons, summary: "Mock review for tests." });
 }
