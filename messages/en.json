@@ -226,7 +226,11 @@
         "micDenied": "The microphone is blocked. Type your question instead.",
         "noSpeech": "I did not hear anything. Try again, or type your question.",
         "safetyTitle": "Let's take a break",
-        "safetyBack": "Back to my goals"
+        "safetyBack": "Back to my goals",
+        "helpful": "Was this helpful?",
+        "helpfulYes": "Yes, it helped",
+        "helpfulNo": "Not really",
+        "helpfulThanks": "Thanks for telling me!"
       },
       "engagement": {
         "stillThere": "Are you still there?",

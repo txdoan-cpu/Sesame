@@ -23,7 +23,7 @@ const InputSchema = z.object({
 });
 
 export type AskResponse =
-  | { ok: true; kind: "answer"; answer: string; checkQuestion: string; fallback: boolean }
+  | { ok: true; kind: "answer"; answer: string; checkQuestion: string; fallback: boolean; questionId: string | null }
   | { ok: true; kind: "safety"; message: string }
   | { ok: false; code: "not_signed_in" | "invalid_input" | "ai_not_connected" | "rate_limited" | "unavailable" };
 
@@ -117,8 +117,15 @@ export async function POST(request: Request) {
     misconception: outcome.misconception,
     fallback: outcome.fallback !== null,
     provider: llmProvider(),
-  });
+  }).select("id").single();
   if (saved.error) console.error("save question failed:", saved.error.message);
 
-  return reply({ ok: true, kind: "answer", answer: outcome.answer, checkQuestion: outcome.checkQuestion, fallback: outcome.fallback !== null });
+  return reply({
+    ok: true,
+    kind: "answer",
+    answer: outcome.answer,
+    checkQuestion: outcome.checkQuestion,
+    fallback: outcome.fallback !== null,
+    questionId: (saved.data?.id as string | undefined) ?? null,
+  });
 }

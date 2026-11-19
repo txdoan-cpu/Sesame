@@ -12,7 +12,14 @@ type State =
   | { phase: "closed" }
   | { phase: "open"; note: string | null }
   | { phase: "sending"; question: string }
-  | { phase: "answered"; question: string; answer: string; checkQuestion: string };
+  | {
+      phase: "answered";
+      question: string;
+      answer: string;
+      checkQuestion: string;
+      questionId: string | null;
+      rated: boolean | null;
+    };
 
 type Props = {
   lessonId: string;
@@ -34,6 +41,16 @@ export function AskPanel({ lessonId, slideNo, aiReady, onPause, onResume, speak,
   const [typed, setTyped] = useState("");
   const history = useRef<Turn[]>([]);
   const mic = useSpeechRecognition();
+
+  /** "Was this helpful?" Saved as questions.helpful; the UI thanks the learner either way. */
+  async function rate(questionId: string, helpful: boolean) {
+    setState((s) => (s.phase === "answered" ? { ...s, rated: helpful } : s));
+    await fetch("/api/ask/feedback", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ questionId, helpful }),
+    }).catch(() => {});
+  }
 
   async function send(question: string) {
     const q = question.trim();
@@ -59,7 +76,7 @@ export function AskPanel({ lessonId, slideNo, aiReady, onPause, onResume, speak,
     if (res.ok) {
       history.current = [...history.current, { question: q, answer: res.answer }].slice(-3);
       setTyped("");
-      setState({ phase: "answered", question: q, answer: res.answer, checkQuestion: res.checkQuestion });
+      setState({ phase: "answered", question: q, answer: res.answer, checkQuestion: res.checkQuestion, questionId: res.questionId, rated: null });
       speak(res.checkQuestion ? `${res.answer} ${res.checkQuestion}` : res.answer);
       return;
     }
@@ -130,6 +147,27 @@ export function AskPanel({ lessonId, slideNo, aiReady, onPause, onResume, speak,
               <p className="font-semibold" data-testid="ask-check">
                 {state.checkQuestion}
               </p>
+            )}
+            {state.questionId && (
+              <div className="flex flex-wrap items-center gap-2" data-testid="ask-helpful">
+                {state.rated === null ? (
+                  <>
+                    <span>{t.helpful}</span>
+                    {([true, false] as const).map((helpful) => (
+                      <button
+                        key={String(helpful)}
+                        type="button"
+                        onClick={() => void rate(state.questionId!, helpful)}
+                        className="min-h-11 rounded-lg border-2 border-current px-4 font-medium"
+                      >
+                        {helpful ? t.helpfulYes : t.helpfulNo}
+                      </button>
+                    ))}
+                  </>
+                ) : (
+                  <span>{t.helpfulThanks}</span>
+                )}
+              </div>
             )}
           </>
         )}

@@ -54,6 +54,13 @@ test.describe("voice Q&A", () => {
     await expect(panel).toContainText("You asked: why do we divide by 4");
     await expect(panel.getByTestId("ask-check")).toHaveText(/\?$/);
 
+    // "Was this helpful?" is saved on the question.
+    await panel.getByTestId("ask-helpful").getByRole("button", { name: "Yes, it helped" }).click();
+    await expect(panel.getByTestId("ask-helpful")).toContainText("Thanks for telling me!");
+    await expect
+      .poll(async () => (await adminClient().from("questions").select("helpful").eq("learner_id", fam.learner.id).single()).data?.helpful)
+      .toBe(true);
+
     await panel.getByRole("button", { name: "Continue lesson" }).click();
     await expect(page.getByTestId("ask-panel")).toHaveCount(0);
     await expect(page.getByTestId("slide-progress")).toHaveText("Slide 1 of 9");
