@@ -1,0 +1,3 @@
+code,strand,description,bloom_level,knowledge_type,indicators,misconceptions,prerequisites
+9PR3,PR,Model and solve linear equations with rational coefficients,apply,procedural,9PR3.1: Solve equations with fractions by inverse operations; 9PR3.2: Verify a solution by substitution; 9PR3.3: Write an equation for a word problem,M1: Operates on one side of the equation only; M6: Multiplies only one term by the common denominator,8PR2
+9PR4,PR,Explain and illustrate strategies to solve single-variable linear inequalities,understand,conceptual,9PR4.1: Show the solution on a number line; 9PR4.2: Explain why the sign flips when multiplying by a negative,M7: Forgets to reverse the inequality sign,8PR2; 9PR3

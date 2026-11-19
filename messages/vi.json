@@ -29,7 +29,7 @@
   },
   "auth": {
     "loginTitle": "Đăng nhập",
-    "parentLoginTitle": "Phụ huynh",
+    "parentLoginTitle": "Phụ huynh và giáo viên",
     "signUpTitle": "Tạo tài khoản phụ huynh",
     "signUpIntro": "Sau bước này, bạn sẽ tạo tài khoản cho con.",
     "displayName": "Tên của bạn",
