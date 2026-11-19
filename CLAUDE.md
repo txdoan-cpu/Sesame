@@ -52,7 +52,9 @@ npm run dev        # local dev server
 npm run build      # production build — must pass before a round is "done"
 npm run lint
 npm run test       # Vitest
-npm run test:e2e   # Playwright
+npm run test:e2e   # Playwright (desktop, tablet, phone)
+npm run eval:ask   # 10 scripted questions against the real LLM provider (needs a key)
+npm run demo:reset # demo family; also demo:time-travel (scenario B), demo:slot-now (scenario C); see DEMO.md
 npx supabase db push --remote   # apply migrations to the linked Supabase cloud project (newer CLI targets local Docker without --remote)
 ```
 
