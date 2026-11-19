@@ -90,3 +90,8 @@ export const QUICK_SPEECH = `
     window.speechSynthesis.cancel = () => {};
   }
 `;
+
+/** Teachers and admins log in with email on the same form as parents. */
+export async function loginStaff(page: Page, email: string, home: RegExp, password = TEST_PASSWORD) {
+  await loginWithForm(page, "parent-login", { Email: email, Password: password }, home);
+}
