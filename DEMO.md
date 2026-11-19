@@ -1,6 +1,8 @@
 # Sesame demo script
 
 How to run and present the AI Instructor demo (Grade 8 Math, St. John's, NL).
+
+**Live demo:** https://sesame-seven-chi.vercel.app (Vercel, deployed from `main` on GitHub; every push to `main` redeploys).
 All accounts, profiles and answers are **synthetic**. Never use real student data, especially with the free Gemini key.
 
 About 25 minutes in total: tour 3 min, scenario A 5 min, scenario B 7 min, scenario C 8 min (mostly waiting), sharing 2 min.
