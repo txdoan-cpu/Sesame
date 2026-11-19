@@ -9,8 +9,11 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "seed:demo": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/seed-demo.ts",
-    "eval:ask": "vitest run --config vitest.eval.config.mts"
+    "eval:ask": "vitest run --config vitest.eval.config.mts",
+    "seed:demo": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts reset",
+    "demo:reset": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts reset",
+    "demo:time-travel": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts time-travel",
+    "demo:slot-now": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/demo.ts slot-now"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.10.0",
