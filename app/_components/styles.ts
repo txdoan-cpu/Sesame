@@ -15,3 +15,10 @@ export const linkClass = "inline-flex min-h-11 items-center font-medium underlin
 export function fill(template: string, values: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (m, key: string) => (key in values ? String(values[key]) : m));
 }
+
+/** "2027-06-30" -> "June 30, 2027" (en-CA) or "30 tháng 6, 2027" (vi). Dates are calendar days, so read them in UTC. */
+export function longDate(isoDate: string, lang: "en" | "vi" = "en"): string {
+  const d = new Date(`${isoDate.slice(0, 10)}T12:00:00Z`);
+  if (Number.isNaN(d.getTime())) return isoDate;
+  return d.toLocaleDateString(lang === "vi" ? "vi-VN" : "en-CA", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+}

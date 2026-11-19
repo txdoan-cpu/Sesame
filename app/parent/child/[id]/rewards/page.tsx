@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ActionForm } from "@/app/_components/ActionForm";
-import { buttonClass, cardClass, fill, inputClass, secondaryButtonClass } from "@/app/_components/styles";
+import { buttonClass, cardClass, fill, inputClass, longDate, secondaryButtonClass } from "@/app/_components/styles";
 import { getCurriculum } from "@/lib/curriculum";
 import { getLang } from "@/lib/lang";
 import { parentMessages } from "@/lib/i18n";
@@ -60,7 +60,7 @@ async function Rewards({ params }: { params: Promise<{ id: string }> }) {
                   <span className="rounded-full border-2 border-blue-700 px-3 text-sm font-medium">{r.statusLabel[rule.status]}</span>
                 </div>
                 <p className="font-mono">{rule.outcomes.join(", ")}</p>
-                <p>{fill(r.terms, { score: Math.round(rule.min_score * 100), days: rule.retention_days, deadline: rule.deadline })}</p>
+                <p>{fill(r.terms, { score: Math.round(rule.min_score * 100), days: rule.retention_days, deadline: longDate(rule.deadline, lang) })}</p>
                 <p>{fill(r.progress, rule.progress)}</p>
                 <p className={rule.co_set ? "text-green-800 dark:text-green-300" : "text-zinc-700 dark:text-zinc-300"} data-testid="co-set">
                   {rule.co_set ? `✓ ${r.coSet}` : r.waiting}

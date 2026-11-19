@@ -1,5 +1,5 @@
 import { ActionForm } from "@/app/_components/ActionForm";
-import { cardClass, fill, inputClass, secondaryButtonClass } from "@/app/_components/styles";
+import { cardClass, fill, inputClass, longDate, secondaryButtonClass } from "@/app/_components/styles";
 import { learnerMessages } from "@/lib/i18n";
 import type { ChangeRequest, RewardRuleView } from "@/lib/portal";
 import { hhmm, type Slot } from "@/lib/schedule";
@@ -31,7 +31,7 @@ export function FamilyPlans({ rules, slots, requests }: { rules: RewardRuleView[
                     outcomes: r.outcomes.join(", "),
                     score: Math.round(r.min_score * 100),
                     days: r.retention_days,
-                    deadline: r.deadline,
+                    deadline: longDate(r.deadline),
                   })}
                 </p>
                 <p>
