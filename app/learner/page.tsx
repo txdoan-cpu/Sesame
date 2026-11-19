@@ -7,7 +7,9 @@ import { OutcomeBoard } from "@/app/_components/OutcomeBoard";
 import { requireRole } from "@/lib/auth/dal";
 import { getCurriculum, getMyOutcomeStatus, getMyTargetOutcome } from "@/lib/curriculum";
 import { learnerMessages } from "@/lib/i18n";
-import { getChangeRequests, getRewardRules, getSchedule } from "@/lib/portal";
+import { getChangeRequests, getMyNotifications, getRewardRules, getSchedule } from "@/lib/portal";
+import { getMyRetentionChecks } from "@/lib/retention";
+import { News } from "./News";
 import { FamilyPlans } from "./FamilyPlans";
 import en from "@/messages/en.json";
 
@@ -27,13 +29,15 @@ export default function LearnerPage() {
 
 async function LearnerHome() {
   const user = await requireRole("learner");
-  const [curriculum, status, target, rules, slots, requests] = await Promise.all([
+  const [curriculum, status, target, rules, slots, requests, notifications, checks] = await Promise.all([
     getCurriculum(),
     getMyOutcomeStatus(),
     getMyTargetOutcome(),
     getRewardRules(user.id),
     getSchedule(user.id),
     getChangeRequests(user.id),
+    getMyNotifications(),
+    getMyRetentionChecks(),
   ]);
 
   return (
@@ -51,6 +55,8 @@ async function LearnerHome() {
           {t.startLesson}
         </Link>
       )}
+      {/* Only outcomes that have a lesson can be checked here. */}
+      <News notifications={notifications} checks={checks.filter((c) => getLessonForOutcome(c.outcome))} />
       <nav aria-label={t.parentViewLink} className="flex flex-wrap gap-4">
         <Link href="/learner/sharing" className="inline-flex min-h-11 items-center font-medium underline">
           {t.sharingLink}

@@ -12,7 +12,16 @@ const statusLabels = learnerMessages.home.status;
 type Done = Extract<ExitSummary, { ok: true }>;
 
 /** 3 tap questions + 1 "explain in your own words". Scored on the server. */
-export function ExitTicket({ lessonId, exit }: { lessonId: string; exit: ExitView }) {
+type Props = {
+  lessonId: string;
+  exit: ExitView;
+  /** "retention": the same check taken again later (§7.4). */
+  kind?: "exit" | "retention";
+  title?: string;
+  onFinished?: () => void;
+};
+
+export function ExitTicket({ lessonId, exit, kind = "exit", title, onFinished }: Props) {
   const id = useId();
   const [choices, setChoices] = useState<Record<string, string>>({});
   const [explanation, setExplanation] = useState("");
@@ -32,15 +41,17 @@ export function ExitTicket({ lessonId, exit }: { lessonId: string; exit: ExitVie
     }
     setError(null);
     startTransition(async () => {
-      const res = await submitExitTicket({ lessonId, choices, explanation });
-      if (res.ok) setResult(res);
-      else setError(t.exit.error);
+      const res = await submitExitTicket({ lessonId, choices, explanation, kind });
+      if (res.ok) {
+        setResult(res);
+        onFinished?.();
+      } else setError(t.exit.error);
     });
   }
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-6" data-testid="exit-ticket">
-      <h2 className="text-2xl font-semibold">{t.exit.title}</h2>
+      <h2 className="text-2xl font-semibold">{title ?? t.exit.title}</h2>
       {exit.choice.map((q, qi) => (
         <fieldset key={q.id} className="flex flex-col gap-2 rounded-xl border-2 border-zinc-300 p-4 dark:border-zinc-700" data-testid={`exit-${q.id}`}>
           <legend className="px-1 text-lg">

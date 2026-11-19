@@ -1,6 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { evaluateRewardsForLearner } from "@/lib/rewards-service";
 import type { OutcomeStatusKind } from "@/lib/learner-profile";
 import type { Lesson } from "./schema";
 import { nextOutcomeStatus, scoreExitTicket, updateProfileFromExit, type ExitAnswers, type ExitScore } from "./scoring";
@@ -28,6 +29,8 @@ export async function saveExitTicket(
   lesson: Lesson,
   answers: ExitAnswers,
   now: Date = new Date(),
+  /** "retention": the same check taken again later, for rewards (§7.4) and "retained" (§6). */
+  kind: "exit" | "retention" = "exit",
 ): Promise<SavedExit> {
   const admin = createAdminClient();
   const result = scoreExitTicket(lesson, answers);
@@ -54,7 +57,7 @@ export async function saveExitTicket(
     learner_id: learnerId,
     outcome_code: lesson.outcome_code,
     lesson_id: lesson.id,
-    kind: "exit",
+    kind,
     score: result.score,
     taken_at: nowIso,
     item_results: {
@@ -90,6 +93,13 @@ export async function saveExitTicket(
     { onConflict: "learner_id" },
   );
   if (prof.error) throw new Error(`upsert learner_profiles: ${prof.error.message}`);
+
+  // Milestones, unlocks and expiry follow straight from the new result.
+  try {
+    await evaluateRewardsForLearner(learnerId, now);
+  } catch (err) {
+    console.error("reward evaluation failed:", err instanceof Error ? err.message : err);
+  }
 
   return { ...result, status: next.status };
 }

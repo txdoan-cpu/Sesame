@@ -89,3 +89,13 @@ export async function requestScheduleChange(_prev: RequestState, fd: FormData): 
   revalidatePath("/learner", "layout");
   return { ok: true };
 }
+
+/** Dismiss a milestone or reward message. */
+export async function markMyNotificationRead(fd: FormData): Promise<void> {
+  await requireRole("learner");
+  const id = field(fd, "id");
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return;
+  const db = await createClient();
+  await db.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+  revalidatePath("/learner", "layout");
+}
