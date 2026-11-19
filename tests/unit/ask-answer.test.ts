@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import raw from "@/content/lessons/8PR2-demo-A.json";
 import { LessonSchema } from "@/lib/lesson/schema";
 import type { AskContext } from "@/lib/ask/answer";
@@ -19,6 +19,12 @@ function ctx(question: string, slideNo = 3): AskContext {
     question,
   };
 }
+
+// The first import pulls in mathjs and the LLM layer; under a busy parallel run it can take
+// several seconds, so load it once up front instead of inside a 5-second test.
+beforeAll(async () => {
+  await import("@/lib/ask/answer");
+}, 60_000);
 
 describe("answerQuestion with the mock provider", () => {
   beforeEach(() => vi.stubEnv("LLM_PROVIDER", "mock"));

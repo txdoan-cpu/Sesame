@@ -5,6 +5,8 @@ import { loadEnvConfig } from "@next/env";
 loadEnvConfig(process.cwd());
 
 const PORT = 3100;
+/** Secret the test server expects on /api/cron/engagement (tests/e2e/helpers/lesson.ts uses the same). */
+const E2E_CRON_SECRET = "e2e-cron-secret";
 
 export default defineConfig({
   testDir: "tests/e2e",
@@ -20,7 +22,7 @@ export default defineConfig({
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     // Deterministic answers in tests; real providers are checked by `npm run eval:ask`.
-    env: { LLM_PROVIDER: "mock" },
+    env: { LLM_PROVIDER: "mock", CRON_SECRET: E2E_CRON_SECRET, ALLOW_TEST_CLOCK: "1" },
     timeout: 120_000,
   },
 });
