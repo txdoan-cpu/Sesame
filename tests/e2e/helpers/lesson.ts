@@ -38,6 +38,9 @@ export async function answer(page: Page, id: string, value: string) {
   await expect(form).toContainText(/Yes|The answer is/);
 }
 
+/** Slide 8 practice answers (every pace level). */
+export const PRACTICE_ANSWERS: Record<string, string> = { s8a: "-4", s8b: "6", s8c: "5", s8d: "5", s8e: "8", s8f: "4", s8t: "12" };
+
 export async function expectSlide(page: Page, n: number) {
   await expect(page.getByTestId("slide-progress")).toHaveText(`Slide ${n} of 9`);
 }
@@ -56,10 +59,12 @@ export async function walkSlides(page: Page, upTo: number) {
     5: async () => answer(page, "s5", "6"),
     6: async () => page.getByRole("button", { name: "Maya. The 2 multiplies the x and the 3." }).click(),
     7: async () => answer(page, "s7", "-10"),
+    // The practice set depends on the learner's pace (§7.8); answer whatever is shown.
     8: async () => {
-      await answer(page, "s8a", "-4");
-      await answer(page, "s8b", "6");
-      await answer(page, "s8c", "5");
+      await expect(page.getByTestId("check-s8a")).toBeVisible();
+      for (const [id, value] of Object.entries(PRACTICE_ANSWERS)) {
+        if (await page.getByTestId(`check-${id}`).count()) await answer(page, id, value);
+      }
     },
   };
   for (let n = 1; n < upTo; n++) {
@@ -78,7 +83,7 @@ export async function answerExitAllRight(page: Page, submitLabel = "Finish lesso
   await page.getByTestId("exit-e3").getByLabel("Take away 5 from the right side too, to keep it balanced.").check();
   await exit.getByRole("textbox").fill("Do the same thing to both sides so it stays balanced.");
   await exit.getByRole("button", { name: submitLabel }).click();
-  await expect(page.getByTestId("lesson-results")).toContainText("You got 3 out of 3.");
+  await expect(page.getByTestId("lesson-results")).toContainText("You got 3 out of 3.", { timeout: 30_000 });
 }
 
 /** Makes speech synthesis finish instantly in headless browsers (narration must not block timers). */

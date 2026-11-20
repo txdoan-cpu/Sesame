@@ -1,3 +1,4 @@
+import { paceFor } from "@/lib/learner/pace";
 import { describe, expect, it } from "vitest";
 import raw from "@/content/lessons/8PR2-demo-A.json";
 import { LessonSchema, type CheckItem, type NumericItem } from "@/lib/lesson/schema";
@@ -33,14 +34,30 @@ describe("lesson 8PR2-demo-A structure", () => {
     for (let n = 1; n < 9; n++) expect(withCheck.includes(n) || withCheck.includes(n + 1), `slides ${n}-${n + 1}`).toBe(true);
   });
 
-  it("practice items are the Appendix B ones with tiered hints", () => {
+  it("practice items start with the Appendix B ones, all with tiered hints", () => {
     const practice = lesson.slides[7].checkpoint!.items as NumericItem[];
-    expect(practice.map((p) => [p.equation, p.answer])).toEqual([
+    expect(practice.slice(0, 3).map((p) => [p.equation, p.answer])).toEqual([
       ["2x + 9 = 1", -4],
       ["x/3 + 4 = 6", 6],
       ["4(x - 2) = 12", 5],
     ]);
     for (const p of practice) expect(p.hints.length).toBe(3);
+  });
+
+  it("every check-in and diagnostic item names the skill it updates (learner model)", () => {
+    const items = [...lesson.slides.flatMap((s) => s.checkpoint?.items ?? []), ...lesson.diagnostic];
+    for (const i of items) expect(i.skill, i.id).toMatch(/^8(N|PR|SS|SP)\d+\.[a-z_]+$/);
+  });
+
+  it("practice sets follow the pace table (low end of each range; fast adds 1 transfer task)", () => {
+    const cp = lesson.slides[7].checkpoint!;
+    for (const level of ["slow", "medium", "fast"] as const) {
+      const pace = paceFor(level);
+      const ids = cp.pacing![level];
+      expect(ids.length, level).toBe(pace.practiceItems[0] + pace.transferItems);
+      expect(new Set(ids).size, level).toBe(ids.length);
+    }
+    expect(cp.pacing!.fast).toContain("s8t");
   });
 });
 

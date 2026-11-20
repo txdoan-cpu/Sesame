@@ -289,6 +289,8 @@ test.describe("teacher input (Round 8)", () => {
       "sharing_settings",
       "notifications",
       "safety_reviews",
+      "knowledge_state",
+      "skill_answers",
       "parent_children_v",
       "parent_attendance_v",
       "parent_outcome_status_v",

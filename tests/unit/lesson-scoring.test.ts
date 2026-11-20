@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import raw from "@/content/lessons/8PR2-demo-A.json";
 import demoA from "@/content/profiles/demo-A.json";
 import { LessonSchema } from "@/lib/lesson/schema";
-import { explainsBalance, nextOutcomeStatus, scoreExitTicket, updateProfileFromExit } from "@/lib/lesson/scoring";
+import { explainsBalance, nextOutcomeStatus, scoreExitTicket, updateMisconceptions } from "@/lib/lesson/scoring";
 
 const lesson = LessonSchema.parse(raw);
 const ALL_RIGHT = { e1: "a", e2: "b", e3: "c" };
@@ -84,23 +84,15 @@ describe("nextOutcomeStatus", () => {
   });
 });
 
-describe("updateProfileFromExit (demo-A)", () => {
-  const profile = { mastery: demoA.mastery as Record<string, number>, misconceptions: demoA.misconceptions };
-
-  it("all right: raises two-step and distributive, clears M2 and M3", () => {
+describe("updateMisconceptions (demo-A)", () => {
+  // Sub-skill mastery is the learner model's job since Round 9 (tests/unit/learner-model.test.ts).
+  it("all right: clears M2 and M3", () => {
     const r = scoreExitTicket(lesson, { choices: ALL_RIGHT, explanation: GOOD_EXPLAIN });
-    const u = updateProfileFromExit(lesson, profile, r);
-    expect(u.mastery["8PR2.two_step"]).toBe(0.73); // 0.45*0.5 + 1*0.5
-    expect(u.mastery["8PR2.distributive"]).toBe(0.6); // 0.20*0.5 + 1*0.5
-    expect(u.mastery["8PR2.one_step"]).toBe(0.85); // untouched
-    expect(u.mastery["8N7.integers"]).toBe(0.7);
-    expect(u.misconceptions).toEqual([]);
+    expect(updateMisconceptions(lesson, demoA.misconceptions, r)).toEqual([]);
   });
 
-  it("choosing the M2 distractor keeps M2 and lowers distributive", () => {
+  it("choosing the M2 distractor keeps M2", () => {
     const r = scoreExitTicket(lesson, { choices: { ...ALL_RIGHT, e2: "a" }, explanation: GOOD_EXPLAIN });
-    const u = updateProfileFromExit(lesson, profile, r);
-    expect(u.mastery["8PR2.distributive"]).toBe(0.1);
-    expect(u.misconceptions).toEqual(["M2"]);
+    expect(updateMisconceptions(lesson, demoA.misconceptions, r)).toEqual(["M2"]);
   });
 });

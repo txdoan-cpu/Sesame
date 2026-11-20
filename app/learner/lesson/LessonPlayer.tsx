@@ -4,8 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { LessonView, NumericItemView } from "@/lib/lesson/view";
 import { learnerMessages } from "@/lib/i18n";
 import Link from "next/link";
+import { recordCheckAnswer } from "./actions";
 import { AskPanel } from "./AskPanel";
-import { Checkpoint, NumericCheck, type ItemOutcome } from "./Checkpoint";
+import { Checkpoint, NumericCheck, type FirstAnswer, type ItemOutcome } from "./Checkpoint";
 import { ExitTicket } from "./ExitTicket";
 import { Visual } from "./Visuals";
 import { useEngagement } from "./useEngagement";
@@ -15,15 +16,28 @@ const t = learnerMessages.lesson;
 
 type Phase = "start" | "diagnostic" | "slides" | "exit";
 
-type PlayerProps = { lesson: LessonView; needsDiagnostic: boolean; minutes: number; aiReady: boolean };
+export type PlayerPace = { level: "slow" | "medium" | "fast"; narrationRate: number };
 
-export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: PlayerProps) {
+type PlayerProps = { lesson: LessonView; needsDiagnostic: boolean; minutes: number; aiReady: boolean; pace: PlayerPace };
+
+export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady, pace }: PlayerProps) {
   const [phase, setPhase] = useState<Phase>("start");
   const [index, setIndex] = useState(0);
   const [diagIndex, setDiagIndex] = useState(0);
   const [outcomes, setOutcomes] = useState<Record<string, ItemOutcome>>({});
   const [safetyMessage, setSafetyMessage] = useState<string | null>(null);
-  const narration = useNarration();
+  const narration = useNarration(pace.narrationRate);
+  // §7.8: first answers go to the learner model one at a time, in order (fire and forget).
+  const answerQueue = useRef<Promise<unknown>>(Promise.resolve());
+  const onFirstAnswer = useCallback<FirstAnswer>(
+    (itemId, response, hintsUsed) => {
+      if (itemId.startsWith("review-")) return;
+      answerQueue.current = answerQueue.current
+        .then(() => recordCheckAnswer({ lessonId: lesson.id, itemId, response, hintsUsed }))
+        .catch(() => undefined);
+    },
+    [lesson.id],
+  );
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   const [review, setReview] = useState<NumericItemView | null>(null);
@@ -96,6 +110,9 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: Play
         <h1 className="text-3xl font-bold">{lesson.title}</h1>
         <p className="text-lg">{t.minutes.replace("{n}", String(minutes))}</p>
         <p>{t.startHint}</p>
+        <p className="text-base text-zinc-700 dark:text-zinc-300" data-testid="lesson-pace" data-pace={pace.level}>
+          {t.pace[pace.level]}
+        </p>
         <button
           type="button"
           onClick={() => setPhase(needsDiagnostic ? "diagnostic" : "slides")}
@@ -114,7 +131,13 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: Play
       <section className="flex flex-col gap-4" data-testid="diagnostic">
         <h1 className="text-3xl font-bold">{t.diagnostic.title}</h1>
         <p>{t.diagnostic.intro}</p>
-        <NumericCheck key={item.id} item={{ ...item, hints: item.hints.slice(0, 1) }} done={outcomes[item.id]} onDone={recordOutcome} />
+        <NumericCheck
+          key={item.id}
+          item={{ ...item, hints: item.hints.slice(0, 1) }}
+          done={outcomes[item.id]}
+          onDone={recordOutcome}
+          onFirstAnswer={onFirstAnswer}
+        />
         <button
           type="button"
           disabled={!outcomes[item.id]}
@@ -128,7 +151,7 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: Play
   }
 
   if (phase === "exit") {
-    return <ExitTicket lessonId={lesson.id} exit={lesson.exit} onFinished={engagement.finish} />;
+    return <ExitTicket lessonId={lesson.id} exit={lesson.exit} onFinished={engagement.finish} beforeSubmit={() => answerQueue.current} />;
   }
 
   if (engagement.paused) {
@@ -220,7 +243,7 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady }: Play
         }}
       />
 
-      {slide.checkpoint && <Checkpoint items={slide.checkpoint} done={outcomes} onItemDone={recordOutcome} />}
+      {slide.checkpoint && <Checkpoint items={slide.checkpoint} done={outcomes} onItemDone={recordOutcome} onFirstAnswer={onFirstAnswer} />}
 
       <nav className="flex flex-wrap items-center gap-3" aria-label="Lesson navigation">
         <button

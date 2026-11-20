@@ -10,6 +10,8 @@ import { needsDiagnostic } from "@/lib/learner-profile";
 import { llmConfigured } from "@/lib/llm";
 import { getLessonForOutcome } from "@/lib/lesson/registry";
 import { toLessonView } from "@/lib/lesson/view";
+import { levelFromProfile } from "@/lib/learner/model";
+import { paceFor } from "@/lib/learner/pace";
 import { createClient } from "@/lib/supabase/server";
 import en from "@/messages/en.json";
 import { LessonPlayer } from "./LessonPlayer";
@@ -48,13 +50,22 @@ async function Lesson() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("learner_profiles")
-    .select("confidence")
+    .select("confidence, learning_rate")
     .eq("learner_id", user.id)
     .maybeSingle();
   const confidence = z.object({ confidence: z.coerce.number() }).safeParse(data);
   const diagnostic = needsDiagnostic({ confidence_of_estimate: confidence.success ? confidence.data.confidence : 0 });
 
+  // §7.8 automatic pacing: the learner's learning rate (slow / medium / fast) picks the practice set and narration speed.
+  const pace = paceFor(levelFromProfile(data?.learning_rate));
+
   return (
-    <LessonPlayer lesson={toLessonView(lesson)} needsDiagnostic={diagnostic} minutes={lesson.minutes} aiReady={llmConfigured()} />
+    <LessonPlayer
+      lesson={toLessonView(lesson, pace.level)}
+      needsDiagnostic={diagnostic}
+      minutes={lesson.minutes}
+      aiReady={llmConfigured()}
+      pace={{ level: pace.level, narrationRate: pace.narrationRate }}
+    />
   );
 }

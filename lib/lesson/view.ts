@@ -1,5 +1,6 @@
 import "server-only";
-import type { CheckItem, Lesson, NumericItem, Visual } from "./schema";
+import type { LearningRateLevel } from "@/lib/learner/bkt";
+import type { CheckItem, Lesson, NumericItem, Slide, Visual } from "./schema";
 import { blockHtml, inlineHtml, mathHtml, plainText } from "./render";
 
 /**
@@ -104,7 +105,14 @@ function visualView(v: Visual): VisualView {
   }
 }
 
-export function toLessonView(lesson: Lesson): LessonView {
+/** The check-in items a learner at this pace sees (§7.8 automatic pacing); every item if the slide has no pacing. */
+export function pacedItems(checkpoint: NonNullable<Slide["checkpoint"]>, level: LearningRateLevel | null): CheckItem[] {
+  const ids = level ? checkpoint.pacing?.[level] : undefined;
+  if (!ids) return checkpoint.items;
+  return ids.map((id) => checkpoint.items.find((i) => i.id === id)).filter((i): i is CheckItem => Boolean(i));
+}
+
+export function toLessonView(lesson: Lesson, level: LearningRateLevel | null = null): LessonView {
   return {
     id: lesson.id,
     title: lesson.title,
@@ -114,7 +122,7 @@ export function toLessonView(lesson: Lesson): LessonView {
       bodyHtml: blockHtml(s.body_md),
       narration: s.narration,
       visual: visualView(s.visual),
-      checkpoint: s.checkpoint ? s.checkpoint.items.map(checkView) : null,
+      checkpoint: s.checkpoint ? pacedItems(s.checkpoint, level).map(checkView) : null,
     })),
     diagnostic: lesson.diagnostic.map(numericView),
     exit: {

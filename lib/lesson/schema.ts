@@ -8,12 +8,16 @@ import { z } from "zod";
 
 const MisconceptionCode = z.string().regex(/^M\d+$/);
 const IndicatorCode = z.string().regex(/^PR\d+\.\d+$/);
+/** Skill id for the learner model (§7.8), same keys as learner_profiles.mastery, e.g. "8PR2.two_step". */
+export const SkillId = z.string().regex(/^8(N|PR|SS|SP)\d+\.[a-z_]+$/);
 
 /** A typed or spoken numeric answer. `equation` (if given) must be satisfied by `answer`. */
 export const NumericItemSchema = z.object({
   kind: z.literal("numeric"),
   id: z.string(),
   prompt: z.string(),
+  /** Which skill a scored answer updates (knowledge_state). */
+  skill: SkillId.optional(),
   /** Equation in x that `answer` solves, checked by substitution. */
   equation: z.string().optional(),
   /** Expression with no variables whose value is `answer` (e.g. "-3(5) + 5"). */
@@ -30,6 +34,7 @@ export const ChoiceItemSchema = z
     kind: z.literal("choice"),
     id: z.string(),
     prompt: z.string(),
+    skill: SkillId.optional(),
     options: z
       .array(
         z.object({
@@ -85,7 +90,19 @@ export const SlideSchema = z.object({
   body_md: z.string(),
   narration: z.string(),
   visual: VisualSchema,
-  checkpoint: z.object({ items: z.array(CheckItemSchema).min(1) }).optional(),
+  checkpoint: z
+    .object({
+      items: z.array(CheckItemSchema).min(1),
+      /**
+       * Practice set per pace level (§7.8 automatic pacing, pace table in Appendix C):
+       * item ids to show for slow / medium / fast learners. Without it, every item shows.
+       */
+      pacing: z
+        .object({ slow: z.array(z.string()).min(1), medium: z.array(z.string()).min(1), fast: z.array(z.string()).min(1) })
+        .optional(),
+    })
+    .refine((c) => !c.pacing || Object.values(c.pacing).flat().every((id) => c.items.some((i) => i.id === id)), "pacing lists only items of this checkpoint")
+    .optional(),
   indicators: z.array(IndicatorCode).default([]),
 });
 
@@ -96,7 +113,7 @@ export const ExitChoiceSchema = z
     equation: z.string().optional(),
     indicator: IndicatorCode,
     /** learner_profiles.mastery key this item updates, e.g. "8PR2.two_step". */
-    skill: z.string().regex(/^8(N|PR|SS|SP)\d+\.[a-z_]+$/),
+    skill: SkillId,
     options: z
       .array(
         z.object({

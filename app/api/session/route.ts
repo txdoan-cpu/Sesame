@@ -2,6 +2,7 @@ import { connection } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { classifyEngagement, clampHeartbeat, shouldSendAwayAlert } from "@/lib/engagement";
+import { refreshProfile } from "@/lib/learner/model";
 import { getLesson } from "@/lib/lesson/registry";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { currentSlot } from "@/lib/time";
@@ -92,6 +93,12 @@ export async function POST(request: Request) {
       .from("sessions")
       .update({ ended_at: now.toISOString(), engagement: classifyEngagement(session.active_seconds, session.idle_seconds) })
       .eq("id", session.id);
+    // §7.8: recompute learner_profiles after each session.
+    try {
+      await refreshProfile(user.id, now);
+    } catch (err) {
+      console.error("refresh learner profile failed:", err instanceof Error ? err.message : err);
+    }
     return reply({ ok: true });
   }
 

@@ -8,6 +8,7 @@
       "kind": "numeric",
       "id": "d1",
       "prompt": "Solve $x + 5 = 9$",
+      "skill": "8PR2.one_step",
       "equation": "x + 5 = 9",
       "answer": 4,
       "hints": [
@@ -19,6 +20,7 @@
       "kind": "numeric",
       "id": "d2",
       "prompt": "Solve $3x = 12$",
+      "skill": "8PR2.one_step",
       "equation": "3x = 12",
       "answer": 4,
       "hints": [
@@ -30,6 +32,7 @@
       "kind": "numeric",
       "id": "d3",
       "prompt": "Solve $2x + 1 = 7$",
+      "skill": "8PR2.two_step",
       "equation": "2x + 1 = 7",
       "answer": 3,
       "hints": [
@@ -41,6 +44,7 @@
       "kind": "numeric",
       "id": "d4",
       "prompt": "Solve $x/2 = 5$",
+      "skill": "8PR2.one_step",
       "equation": "x/2 = 5",
       "answer": 10,
       "hints": [
@@ -67,6 +71,7 @@
             "kind": "numeric",
             "id": "s1a",
             "prompt": "Solve $4x = 20$",
+            "skill": "8PR2.one_step",
             "equation": "4x = 20",
             "answer": 5,
             "hints": [
@@ -80,6 +85,7 @@
             "kind": "numeric",
             "id": "s1b",
             "prompt": "Solve $x + 7 = 12$",
+            "skill": "8PR2.one_step",
             "equation": "x + 7 = 12",
             "answer": 5,
             "hints": [
@@ -111,6 +117,7 @@
             "kind": "choice",
             "id": "s2",
             "prompt": "What happens if we add 2 to only one side?",
+            "skill": "8PR2.two_step",
             "options": [
               {
                 "id": "a",
@@ -185,6 +192,7 @@
             "kind": "numeric",
             "id": "s4",
             "prompt": "Fill in the last step: $x = ?$",
+            "skill": "8PR2.two_step",
             "equation": "5x - 7 = 18",
             "answer": 5,
             "hints": [
@@ -218,6 +226,7 @@
             "kind": "numeric",
             "id": "s5",
             "prompt": "How many 1-tiles are on the left side?",
+            "skill": "8PR2.distributive",
             "expression": "2 * 3",
             "answer": 6,
             "hints": [
@@ -269,6 +278,7 @@
             "kind": "choice",
             "id": "s6",
             "prompt": "Who is right, and why?",
+            "skill": "8PR2.distributive",
             "options": [
               {
                 "id": "a",
@@ -321,6 +331,7 @@
             "kind": "numeric",
             "id": "s7",
             "prompt": "Check it: what is $-3(5) + 5$?",
+            "skill": "8N7.integers",
             "expression": "-3(5) + 5",
             "answer": -10,
             "hints": [
@@ -336,8 +347,8 @@
     {
       "no": 8,
       "title": "Practice",
-      "body_md": "Three to try. Use a hint if you need one.\n\n- $2x + 9 = 1$\n- $x/3 + 4 = 6$\n- $4(x - 2) = 12$",
-      "narration": "Now you try three on your own. If you get stuck, ask for a hint. Each hint gives you a little more help. There is no rush.",
+      "body_md": "Practice time. Use a hint if you need one.",
+      "narration": "Now you try some on your own. If you get stuck, ask for a hint. Each hint gives you a little more help. There is no rush.",
       "visual": {
         "type": "none"
       },
@@ -351,6 +362,7 @@
             "kind": "numeric",
             "id": "s8a",
             "prompt": "Solve $2x + 9 = 1$",
+            "skill": "8PR2.two_step",
             "equation": "2x + 9 = 1",
             "answer": -4,
             "hints": [
@@ -364,6 +376,7 @@
             "kind": "numeric",
             "id": "s8b",
             "prompt": "Solve $x/3 + 4 = 6$",
+            "skill": "8PR2.two_step",
             "equation": "x/3 + 4 = 6",
             "answer": 6,
             "hints": [
@@ -377,6 +390,7 @@
             "kind": "numeric",
             "id": "s8c",
             "prompt": "Solve $4(x - 2) = 12$",
+            "skill": "8PR2.distributive",
             "equation": "4(x - 2) = 12",
             "answer": 5,
             "hints": [
@@ -385,8 +399,85 @@
               "4x = 20. Divide both sides by 4."
             ],
             "correct_feedback": "Yes! x = 5. Check: 4(5 - 2) = 12."
+          },
+          {
+            "kind": "numeric",
+            "id": "s8d",
+            "prompt": "Solve $3x - 4 = 11$",
+            "skill": "8PR2.two_step",
+            "equation": "3x - 4 = 11",
+            "answer": 5,
+            "hints": [
+              "Get 3x alone first. What undoes taking away 4?",
+              "Add 4 to both sides: 3x = 11 + 4 = 15.",
+              "Now divide both sides by 3. 15 divided by 3 is 5."
+            ],
+            "correct_feedback": "Yes! x = 5. Check: 3(5) - 4 = 11."
+          },
+          {
+            "kind": "numeric",
+            "id": "s8e",
+            "prompt": "Solve $x/2 - 3 = 1$",
+            "skill": "8PR2.two_step",
+            "equation": "x/2 - 3 = 1",
+            "answer": 8,
+            "hints": [
+              "Undo the - 3 first. Add 3 to both sides.",
+              "Now x/2 = 4. What undoes dividing by 2?",
+              "Multiply both sides by 2: x = 4 times 2 = 8."
+            ],
+            "correct_feedback": "Yes! x = 8. Check: 8/2 - 3 = 1."
+          },
+          {
+            "kind": "numeric",
+            "id": "s8f",
+            "prompt": "Solve $3(x + 1) = 15$",
+            "skill": "8PR2.distributive",
+            "equation": "3(x + 1) = 15",
+            "answer": 4,
+            "hints": [
+              "Share the 3 with both terms inside the brackets.",
+              "3(x + 1) = 3x + 3. So 3x + 3 = 15.",
+              "Take away 3 from both sides: 3x = 12. Then divide by 3."
+            ],
+            "correct_feedback": "Yes! x = 4. Check: 3(4 + 1) = 15."
+          },
+          {
+            "kind": "numeric",
+            "id": "s8t",
+            "prompt": "A team pays 30 dollars to rent the rink, plus 5 dollars for each player. The bill is 90 dollars. How many players came?",
+            "skill": "8PR2.two_step",
+            "equation": "5x + 30 = 90",
+            "answer": 12,
+            "hints": [
+              "Let x be the number of players. Each player costs 5 dollars, so that part is 5x.",
+              "Add the rink: 5x + 30 = 90. Take away 30 from both sides.",
+              "5x = 60. Divide both sides by 5."
+            ],
+            "correct_feedback": "Yes! 12 players. Check: 5(12) + 30 = 90."
           }
-        ]
+        ],
+        "pacing": {
+          "slow": [
+            "s8a",
+            "s8b",
+            "s8c",
+            "s8d",
+            "s8e",
+            "s8f"
+          ],
+          "medium": [
+            "s8a",
+            "s8b",
+            "s8c",
+            "s8d"
+          ],
+          "fast": [
+            "s8a",
+            "s8c",
+            "s8t"
+          ]
+        }
       }
     },
     {

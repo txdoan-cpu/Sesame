@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/dal";
+import { recordAnswers } from "@/lib/learner/model";
 import { getLesson } from "@/lib/lesson/registry";
+import { answerMatches, parseNumericAnswer } from "@/lib/math/answer";
 import { saveExitTicket } from "@/lib/lesson/save";
 import { createClient } from "@/lib/supabase/server";
 import type { OutcomeStatusKind } from "@/lib/learner-profile";
@@ -72,5 +74,52 @@ export async function submitExitTicket(input: unknown): Promise<ExitSummary> {
   } catch (err) {
     console.error("submitExitTicket failed:", err instanceof Error ? err.message : err);
     return { ok: false, error: "save_failed" };
+  }
+}
+
+const AnswerInput = z.object({
+  lessonId: z.string().max(100),
+  itemId: z.string().max(40),
+  /** The learner's first answer: typed or spoken text for numeric items, the option id for choices. */
+  response: z.string().max(200),
+  /** Hints opened before this answer; a hint first counts as "not yet" for the learner model. */
+  hintsUsed: z.number().int().min(0).max(10),
+});
+
+/**
+ * Learner model (§7.8): a check-in or diagnostic answer is scored on the server
+ * (the first try only) and updates knowledge_state. Fire-and-forget from the player.
+ */
+export async function recordCheckAnswer(input: unknown): Promise<{ ok: boolean }> {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "learner") return { ok: false };
+  const p = AnswerInput.safeParse(input);
+  if (!p.success) return { ok: false };
+  const lesson = getLesson(p.data.lessonId);
+  if (!lesson) return { ok: false };
+
+  const fromSlides = lesson.slides.flatMap((s) => s.checkpoint?.items ?? []).find((i) => i.id === p.data.itemId);
+  const fromDiag = fromSlides ? undefined : lesson.diagnostic.find((i) => i.id === p.data.itemId);
+  const item = fromSlides ?? fromDiag;
+  if (!item?.skill) return { ok: false };
+
+  const right =
+    item.kind === "numeric"
+      ? parseNumericAnswer(p.data.response) !== null && answerMatches(p.data.response, item.answer)
+      : item.options.some((o) => o.id === p.data.response && o.correct);
+  try {
+    await recordAnswers(user.id, [
+      {
+        skill: item.skill,
+        correct: right && p.data.hintsUsed === 0,
+        source: fromSlides ? "checkpoint" : "diagnostic",
+        lessonId: lesson.id,
+        itemId: item.id,
+      },
+    ]);
+    return { ok: true };
+  } catch (err) {
+    console.error("recordCheckAnswer failed:", err instanceof Error ? err.message : err);
+    return { ok: false };
   }
 }

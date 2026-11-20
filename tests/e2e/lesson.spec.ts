@@ -1,3 +1,4 @@
+import { DEFAULT_PARAMS, replay } from "@/lib/learner/bkt";
 import { expect, test, type Page } from "@playwright/test";
 import demoA from "@/content/profiles/demo-A.json";
 import { LearnerProfileSchema, toLearnerProfileRow } from "@/lib/learner-profile";
@@ -93,6 +94,9 @@ test.describe("lesson player", () => {
     await answer(page, "s8c", "7");
     await page.getByTestId("check-s8c").getByRole("button", { name: "Show me the answer" }).click();
     await expect(page.getByTestId("check-s8c")).toContainText("The answer is 5.");
+    // Medium pace (default learning rate 0.2): a 4th practice item (§7.8 pace table).
+    await expect(page.getByTestId("check-s8e")).toHaveCount(0);
+    await answer(page, "s8d", "5");
     await next.click();
 
     await expectSlide(page, 9, "Show what you know");
@@ -112,7 +116,8 @@ test.describe("lesson player", () => {
     await exit.getByRole("button", { name: "Finish lesson" }).click();
 
     const results = page.getByTestId("lesson-results");
-    await expect(results).toContainText("You got 3 out of 3.");
+    // Saving waits for check-in answers still going to the learner model.
+    await expect(results).toContainText("You got 3 out of 3.", { timeout: 30_000 });
     await expect(results).toContainText("You have got this goal");
     await expect(page.getByTestId("result-status")).toHaveText("Got it!");
 
@@ -127,9 +132,31 @@ test.describe("lesson player", () => {
     expect(status.data).toMatchObject({ status: "achieved", mastery: 1 });
     expect(status.data?.achieved_at).toBeTruthy();
 
-    const prof = await admin.from("learner_profiles").select("mastery, misconceptions").eq("learner_id", fam.learner.id).single();
-    expect(prof.data?.mastery).toMatchObject({ "8PR2.two_step": 0.73, "8PR2.distributive": 0.6, "8PR2.one_step": 0.85 });
+    // Learner model (§7.8): every first answer (check-ins and exit ticket) went through BKT,
+    // starting from the profile's estimate. A hint before answering counts as "not yet".
+    const firstTries: Record<string, { pInit: number; answers: boolean[] }> = {
+      "8PR2.one_step": { pInit: 0.85, answers: [false, true] }, // s1a (4), s1b
+      "8PR2.two_step": { pInit: 0.45, answers: [false, true, true, true, true, true, true] }, // s2 wrong, s4, s8a, s8b, s8d, e1, e3
+      "8PR2.distributive": { pInit: 0.2, answers: [true, true, false, true] }, // s5, s6, s8c (hints first), e2
+      "8N7.integers": { pInit: 0.7, answers: [true] }, // s7
+    };
+    await expect
+      .poll(async () => (await admin.from("knowledge_state").select("skill_id").eq("learner_id", fam.learner.id)).data?.length)
+      .toBe(4);
+    const ks = await admin.from("knowledge_state").select("skill_id, attempts, p_mastery, p_init").eq("learner_id", fam.learner.id);
+    const prof = await admin.from("learner_profiles").select("mastery, misconceptions, readiness, learning_rate").eq("learner_id", fam.learner.id).single();
+    for (const [skill, { pInit, answers }] of Object.entries(firstTries)) {
+      const row = ks.data?.find((r) => r.skill_id === skill);
+      expect(row?.attempts, skill).toBe(answers.length);
+      expect(Number(row?.p_init), skill).toBe(pInit);
+      const expected = Math.round(replay(pInit, answers, DEFAULT_PARAMS) * 100) / 100;
+      expect(prof.data?.mastery[skill], skill).toBe(expected);
+    }
     expect(prof.data?.misconceptions).toEqual([]);
+    // readiness = mean mastery of 8PR2's prerequisites (one-step and integers).
+    const m = prof.data?.mastery as Record<string, number>;
+    expect(Number(prof.data?.readiness)).toBeCloseTo((m["8PR2.one_step"] + m["8N7.integers"]) / 2, 2);
+    expect(prof.data?.learning_rate).toMatchObject({ level: "medium", p_transit: 0.2 });
 
     const assessments = await admin.from("assessments").select("kind, score, lesson_id, item_results").eq("learner_id", fam.learner.id);
     expect(assessments.data).toHaveLength(1);

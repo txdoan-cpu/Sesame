@@ -11,23 +11,27 @@ const t = learnerMessages.lesson.check;
 
 export type ItemOutcome = { id: string; correct: boolean; attempts: number; hintsUsed: number; revealed: boolean };
 
+/** Called once per item with the learner's first answer, for the learner model (§7.8). */
+export type FirstAnswer = (itemId: string, response: string, hintsUsed: number) => void;
+
 type Props = {
   items: CheckItemView[];
   onItemDone: (outcome: ItemOutcome) => void;
   /** Ids already finished (keeps state when the learner goes back). */
   done: Record<string, ItemOutcome>;
+  onFirstAnswer?: FirstAnswer;
 };
 
 /** Slide check-in. Every item must be answered (or revealed) before moving on. */
-export function Checkpoint({ items, onItemDone, done }: Props) {
+export function Checkpoint({ items, onItemDone, done, onFirstAnswer }: Props) {
   return (
     <section aria-label={t.title} className="flex flex-col gap-4 rounded-xl border-2 border-blue-700 p-4">
       <h3 className="text-xl font-semibold">{t.title}</h3>
       {items.map((item) =>
         item.kind === "numeric" ? (
-          <NumericCheck key={item.id} item={item} done={done[item.id]} onDone={onItemDone} />
+          <NumericCheck key={item.id} item={item} done={done[item.id]} onDone={onItemDone} onFirstAnswer={onFirstAnswer} />
         ) : (
-          <ChoiceCheck key={item.id} item={item} done={done[item.id]} onDone={onItemDone} />
+          <ChoiceCheck key={item.id} item={item} done={done[item.id]} onDone={onItemDone} onFirstAnswer={onFirstAnswer} />
         ),
       )}
     </section>
@@ -38,10 +42,12 @@ export function NumericCheck({
   item,
   done,
   onDone,
+  onFirstAnswer,
 }: {
   item: NumericItemView;
   done?: ItemOutcome;
   onDone: (o: ItemOutcome) => void;
+  onFirstAnswer?: FirstAnswer;
 }) {
   const id = useId();
   const [value, setValue] = useState("");
@@ -76,6 +82,7 @@ export function NumericCheck({
     }
     const next = attempts + 1;
     setAttempts(next);
+    if (next === 1) onFirstAnswer?.(item.id, value, hintsShown);
     if (answerMatches(value, item.answer)) {
       setMessage(null);
       onDone({ id: item.id, correct: true, attempts: next, hintsUsed: hintsShown, revealed: false });
@@ -156,10 +163,12 @@ function ChoiceCheck({
   item,
   done,
   onDone,
+  onFirstAnswer,
 }: {
   item: ChoiceItemView;
   done?: ItemOutcome;
   onDone: (o: ItemOutcome) => void;
+  onFirstAnswer?: FirstAnswer;
 }) {
   const [picked, setPicked] = useState<string | null>(null);
   const [attempts, setAttempts] = useState(0);
@@ -171,6 +180,7 @@ function ChoiceCheck({
     if (!option) return;
     const next = attempts + 1;
     setAttempts(next);
+    if (next === 1) onFirstAnswer?.(item.id, optionId, 0);
     setPicked(optionId);
     if (option.correct) onDone({ id: item.id, correct: next === 1, attempts: next, hintsUsed: 0, revealed: false });
   }

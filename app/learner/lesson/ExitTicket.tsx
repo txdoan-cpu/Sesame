@@ -19,9 +19,11 @@ type Props = {
   kind?: "exit" | "retention";
   title?: string;
   onFinished?: () => void;
+  /** Waits for check-in answers still being saved, so the learner model sees them in order. */
+  beforeSubmit?: () => Promise<unknown>;
 };
 
-export function ExitTicket({ lessonId, exit, kind = "exit", title, onFinished }: Props) {
+export function ExitTicket({ lessonId, exit, kind = "exit", title, onFinished, beforeSubmit }: Props) {
   const id = useId();
   const [choices, setChoices] = useState<Record<string, string>>({});
   const [explanation, setExplanation] = useState("");
@@ -41,6 +43,7 @@ export function ExitTicket({ lessonId, exit, kind = "exit", title, onFinished }:
     }
     setError(null);
     startTransition(async () => {
+      await beforeSubmit?.().catch(() => undefined);
       const res = await submitExitTicket({ lessonId, choices, explanation, kind });
       if (res.ok) {
         setResult(res);

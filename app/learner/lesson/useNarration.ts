@@ -19,7 +19,12 @@ function pickVoice(): SpeechSynthesisVoice | null {
  * Slide narration with the browser's speechSynthesis (CLAUDE.md §3).
  * Text is always shown on screen as well, so nothing depends on sound.
  */
-export function useNarration() {
+/** `rate` comes from the pace table (§7.8): 0.9 slow, 1.0 medium, 1.05 fast. */
+export function useNarration(rate = 1) {
+  const rateRef = useRef(rate);
+  useEffect(() => {
+    rateRef.current = rate;
+  }, [rate]);
   const supported = useSyncExternalStore(subscribe, isSupported, () => false);
   const [speaking, setSpeaking] = useState(false);
   // Refs so the engagement tracker can read the latest values on every tick.
@@ -39,7 +44,7 @@ export function useNarration() {
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "en-CA";
-    u.rate = 0.95;
+    u.rate = rateRef.current;
     const voice = pickVoice();
     if (voice) u.voice = voice;
     u.onstart = () => {

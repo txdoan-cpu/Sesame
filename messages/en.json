@@ -240,6 +240,11 @@
         "reviewTitle": "Quick review",
         "reviewIntro": "Welcome back! Here is a quick one before we go on.",
         "continue": "Continue the lesson"
+      },
+      "pace": {
+        "slow": "Today we go step by step, with extra practice.",
+        "medium": "Today we go at a steady pace.",
+        "fast": "Today we move quickly, with a real-life challenge at the end."
       }
     },
     "sharing": {

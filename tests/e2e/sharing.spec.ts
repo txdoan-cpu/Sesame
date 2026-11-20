@@ -152,7 +152,7 @@ test.describe("sharing (§7.3)", () => {
     const learnerBSees = await visible(learnerB);
     expect(Object.values(learnerBSees).every((v) => v === false)).toBe(true);
 
-    for (const table of ["outcome_status", "assessments", "questions", "learner_profiles", "sessions", "sharing_settings"]) {
+    for (const table of ["outcome_status", "assessments", "questions", "learner_profiles", "sessions", "sharing_settings", "knowledge_state", "skill_answers"]) {
       const r = await parentA.from(table).select("*").eq("learner_id", a.learner.id);
       expect(r.data ?? [], table).toEqual([]);
     }

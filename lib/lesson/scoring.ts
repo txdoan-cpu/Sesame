@@ -111,30 +111,13 @@ export function nextOutcomeStatus(prev: PreviousStatus, result: ExitScore, now: 
   return { status, mastery, achieved_at: prev?.achieved_at ?? null, retained_at: prev?.retained_at ?? null };
 }
 
-/** Weight of the new evidence when blending sub-skill mastery. */
-const NEW_EVIDENCE_WEIGHT = 0.5;
-
 /**
- * Updates learner_profiles.mastery and misconceptions from item results.
- * Each sub-skill blends old mastery with this ticket's result for that skill.
+ * Updates learner_profiles.misconceptions from exit-ticket results. Sub-skill
+ * mastery comes from the learner model (BKT, lib/learner/model.ts) since Round 9.
  * A misconception is added when chosen, and cleared when an item that offered
  * it as a distractor was answered correctly (and it was not chosen elsewhere).
  */
-export function updateProfileFromExit(
-  lesson: Lesson,
-  profile: { mastery: Record<string, number>; misconceptions: string[] },
-  result: ExitScore,
-): { mastery: Record<string, number>; misconceptions: string[] } {
-  const bySkill: Record<string, boolean[]> = {};
-  for (const item of result.items) (bySkill[item.skill] ??= []).push(item.correct);
-
-  const mastery = { ...profile.mastery };
-  for (const [skill, results] of Object.entries(bySkill)) {
-    const fresh = results.filter(Boolean).length / results.length;
-    const old = mastery[skill];
-    mastery[skill] = round2(old === undefined ? fresh : old * (1 - NEW_EVIDENCE_WEIGHT) + fresh * NEW_EVIDENCE_WEIGHT);
-  }
-
+export function updateMisconceptions(lesson: Lesson, previous: string[], result: ExitScore): string[] {
   const chosen = new Set(result.items.flatMap((i) => (i.misconception ? [i.misconception] : [])));
   const cleared = new Set<string>();
   for (const item of result.items) {
@@ -142,7 +125,5 @@ export function updateProfileFromExit(
     const q = lesson.exit_ticket.choice.find((c) => c.id === item.item);
     for (const o of q?.options ?? []) if (o.misconception && !chosen.has(o.misconception)) cleared.add(o.misconception);
   }
-  const misconceptions = [...new Set([...profile.misconceptions.filter((m) => !cleared.has(m)), ...chosen])].sort();
-
-  return { mastery, misconceptions };
+  return [...new Set([...previous.filter((m) => !cleared.has(m)), ...chosen])].sort();
 }

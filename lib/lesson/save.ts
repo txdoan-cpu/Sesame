@@ -1,10 +1,11 @@
 import "server-only";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { recordAnswers } from "@/lib/learner/model";
 import { evaluateRewardsForLearner } from "@/lib/rewards-service";
 import type { OutcomeStatusKind } from "@/lib/learner-profile";
 import type { Lesson } from "./schema";
-import { nextOutcomeStatus, scoreExitTicket, updateProfileFromExit, type ExitAnswers, type ExitScore } from "./scoring";
+import { nextOutcomeStatus, scoreExitTicket, updateMisconceptions, type ExitAnswers, type ExitScore } from "./scoring";
 
 const PrevStatusRow = z.object({
   status: z.enum(["not_started", "learning", "nearly", "achieved", "retained"]),
@@ -12,16 +13,14 @@ const PrevStatusRow = z.object({
   retained_at: z.string().nullable(),
 });
 
-const ProfileRow = z.object({
-  mastery: z.record(z.string(), z.number()),
-  misconceptions: z.array(z.string()),
-});
+const ProfileRow = z.object({ misconceptions: z.array(z.string()) });
 
 export type SavedExit = ExitScore & { status: OutcomeStatusKind };
 
 /**
  * Scores an exit ticket on the server and writes assessments, outcome_status
- * and learner_profiles (mastery, misconceptions). Caller must have checked
+ * and learner_profiles.misconceptions; each item also updates the learner
+ * model (BKT, §7.8), which recomputes learner_profiles.mastery. Caller must have checked
  * that `learnerId` is the signed-in learner.
  */
 export async function saveExitTicket(
@@ -42,15 +41,15 @@ export async function saveExitTicket(
       .eq("learner_id", learnerId)
       .eq("outcome_code", lesson.outcome_code)
       .maybeSingle(),
-    admin.from("learner_profiles").select("mastery, misconceptions").eq("learner_id", learnerId).maybeSingle(),
+    admin.from("learner_profiles").select("misconceptions").eq("learner_id", learnerId).maybeSingle(),
   ]);
   if (prevRes.error) throw new Error(`read outcome_status: ${prevRes.error.message}`);
   if (profileRes.error) throw new Error(`read learner_profiles: ${profileRes.error.message}`);
 
   const prev = prevRes.data ? PrevStatusRow.parse(prevRes.data) : null;
-  const profile = profileRes.data ? ProfileRow.parse(profileRes.data) : { mastery: {}, misconceptions: [] };
+  const profile = profileRes.data ? ProfileRow.parse(profileRes.data) : { misconceptions: [] };
   const next = nextOutcomeStatus(prev, result, now);
-  const updated = updateProfileFromExit(lesson, profile, result);
+  const misconceptions = updateMisconceptions(lesson, profile.misconceptions, result);
   const nowIso = now.toISOString();
 
   const insert = await admin.from("assessments").insert({
@@ -84,15 +83,17 @@ export async function saveExitTicket(
   if (status.error) throw new Error(`upsert outcome_status: ${status.error.message}`);
 
   const prof = await admin.from("learner_profiles").upsert(
-    {
-      learner_id: learnerId,
-      mastery: updated.mastery,
-      misconceptions: updated.misconceptions,
-      updated_at: nowIso,
-    },
+    { learner_id: learnerId, misconceptions, updated_at: nowIso },
     { onConflict: "learner_id" },
   );
   if (prof.error) throw new Error(`upsert learner_profiles: ${prof.error.message}`);
+
+  // §7.8: every scored exit-ticket item updates knowledge_state; the profile's mastery follows.
+  await recordAnswers(
+    learnerId,
+    result.items.map((i) => ({ skill: i.skill, correct: i.correct, source: kind, lessonId: lesson.id, itemId: i.item })),
+    now,
+  );
 
   // Milestones, unlocks and expiry follow straight from the new result.
   try {
