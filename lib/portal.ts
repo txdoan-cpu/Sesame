@@ -34,6 +34,8 @@ export type ChildView = {
   scores: { id: string; outcome_code: string; kind: string; score: number; mastered: boolean; taken_at: string }[] | null;
   questions: { id: string; slide_no: number | null; text: string; indicator: string | null; created_at: string }[] | null;
   misconceptions: string[] | null;
+  /** Learner model pace level; null = private, "unknown" = not estimated yet. */
+  learningPace: "slow" | "medium" | "fast" | "unknown" | null;
   attendance: { id: string; scheduled_for: string | null; started_at: string | null; active_seconds: number; idle_seconds: number; engagement: string | null }[];
 };
 
@@ -52,7 +54,7 @@ export async function getChildView(learnerId: string): Promise<ChildView> {
 
   const ifShared = async <T,>(item: SharingItem, load: () => Promise<T>): Promise<T | null> => (sharing[item].shared ? load() : null);
 
-  const [outcomeStatus, scores, questions, misconceptions, attendance] = await Promise.all([
+  const [outcomeStatus, scores, questions, misconceptions, learningPace, attendance] = await Promise.all([
     ifShared("outcome_status", async () => {
       const r = await db.from("parent_outcome_status_v").select("outcome_code, status, mastery").eq("learner_id", learnerId);
       return z
@@ -85,6 +87,10 @@ export async function getChildView(learnerId: string): Promise<ChildView> {
       const r = await db.from("parent_misconceptions_v").select("misconceptions").eq("learner_id", learnerId).maybeSingle();
       return z.object({ misconceptions: z.array(z.string()) }).safeParse(r.data).data?.misconceptions ?? [];
     }),
+    ifShared("learning_pace", async () => {
+      const r = await db.from("parent_learning_pace_v").select("level").eq("learner_id", learnerId).maybeSingle();
+      return z.object({ level: z.enum(["slow", "medium", "fast"]) }).safeParse(r.data).data?.level ?? ("unknown" as const);
+    }),
     // Attendance is locked (always shared).
     (async () => {
       const r = await db
@@ -108,7 +114,7 @@ export async function getChildView(learnerId: string): Promise<ChildView> {
     })(),
   ]);
 
-  return { sharing, outcomeStatus, scores, questions, misconceptions, attendance };
+  return { sharing, outcomeStatus, scores, questions, misconceptions, learningPace, attendance };
 }
 
 const RuleRow = z.object({

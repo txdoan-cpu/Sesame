@@ -130,6 +130,17 @@ test.describe("parent portal", () => {
     await child.getByTestId("sharing-outcome_status").getByRole("button", { name: "Share it" }).click();
     await parent.reload();
     await expect(parent.getByTestId("outcome-8PR2")).toContainText("Learning");
+
+    // Learning pace (Round 9 owner decision): private by default; the child may share it.
+    await expect(parent.getByTestId("private-learning_pace")).toBeVisible();
+    await child.getByTestId("sharing-learning_pace").getByRole("button", { name: "Share it" }).click();
+    await expect(child.getByTestId("sharing-learning_pace").getByTestId("sharing-state")).toHaveText("Shared");
+    await parent.reload();
+    await expect(parent.getByTestId("learning-pace")).toBeVisible();
+    await parent.getByRole("button", { name: "Tiếng Việt" }).click();
+    await expect(parent.getByTestId("section-learning_pace")).toContainText("Nhịp độ học");
+    await parent.getByRole("button", { name: "English" }).click();
+    await child.getByTestId("sharing-learning_pace").getByRole("button", { name: "Keep it private" }).click();
   });
 
   test("parent resets the child's password; the child logs in with the new one", async ({ browser }) => {

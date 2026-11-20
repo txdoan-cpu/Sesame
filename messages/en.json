@@ -262,7 +262,8 @@
         "outcome_status": "My math goal progress",
         "scores": "My lesson results",
         "question_summaries": "Questions I ask in lessons",
-        "misconceptions": "Mistakes I often make"
+        "misconceptions": "Mistakes I often make",
+        "learning_pace": "My learning pace"
       },
       "why": {
         "attendance": "Your parent sets your study times, so they always see if you studied.",
@@ -303,7 +304,8 @@
       "outcome_status": "Math outcomes",
       "scores": "Lesson results",
       "question_summaries": "Questions asked in lessons",
-      "misconceptions": "Common mistakes to work on"
+      "misconceptions": "Common mistakes to work on",
+      "learning_pace": "Learning pace"
     },
     "attendanceEmpty": "No study sessions yet. Session tracking starts in a later step of the demo.",
     "attendanceRow": "{date}: {active} min active, {idle} min idle",
@@ -467,6 +469,12 @@
         "D1": "Slides and voice work together",
         "E1": "Checks and feedback"
       }
+    },
+    "pace": {
+      "slow": "Step by step: lessons give extra practice and slower narration.",
+      "medium": "Steady: the usual amount of practice.",
+      "fast": "Quick: less practice and a real-life challenge.",
+      "unknown": "Not worked out yet. It updates as your child answers questions."
     }
   },
   "teacher": {

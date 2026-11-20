@@ -92,7 +92,8 @@
       "outcome_status": "Mục tiêu Toán",
       "scores": "Kết quả bài học",
       "question_summaries": "Câu hỏi con đã hỏi trong bài",
-      "misconceptions": "Lỗi hay gặp cần luyện thêm"
+      "misconceptions": "Lỗi hay gặp cần luyện thêm",
+      "learning_pace": "Nhịp độ học"
     },
     "attendanceEmpty": "Chưa có buổi học nào. Việc theo dõi buổi học sẽ có ở bước sau của bản demo.",
     "attendanceRow": "{date}: học thật {active} phút, ngồi không {idle} phút",
@@ -256,6 +257,12 @@
         "D1": "Slide và lời đọc ăn khớp",
         "E1": "Kiểm tra và phản hồi"
       }
+    },
+    "pace": {
+      "slow": "Từng bước một: bài học có thêm bài luyện tập và đọc chậm hơn.",
+      "medium": "Đều đặn: lượng luyện tập bình thường.",
+      "fast": "Nhanh: ít luyện tập hơn và có một thử thách thực tế.",
+      "unknown": "Chưa xác định. Sẽ cập nhật khi con trả lời câu hỏi."
     }
   }
 }

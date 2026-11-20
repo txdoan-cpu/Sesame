@@ -35,6 +35,7 @@ test.describe("sharing (§7.3)", () => {
       scores: await has(db.from("parent_scores_v").select("id").eq("learner_id", id)),
       question_summaries: await has(db.from("parent_questions_v").select("id").eq("learner_id", id)),
       misconceptions: await has(db.from("parent_misconceptions_v").select("learner_id").eq("learner_id", id)),
+      learning_pace: await has(db.from("parent_learning_pace_v").select("level").eq("learner_id", id)),
     };
   }
 
@@ -50,7 +51,10 @@ test.describe("sharing (§7.3)", () => {
     const id = a.learner.id;
     const profile = LearnerProfileSchema.parse(demoA);
     const seed = await Promise.all([
-      admin.from("learner_profiles").insert([toLearnerProfileRow(profile, id), toLearnerProfileRow(profile, b.learner.id)]),
+      admin.from("learner_profiles").insert([
+        { ...toLearnerProfileRow(profile, id), learning_rate: { level: "slow", p_transit: 0.1 } },
+        { ...toLearnerProfileRow(profile, b.learner.id), learning_rate: {} },
+      ]),
       admin.from("outcome_status").insert({ learner_id: id, outcome_code: "8PR2", status: "achieved", mastery: 1, achieved_at: new Date().toISOString() }),
       admin.from("assessments").insert({ learner_id: id, outcome_code: "8PR2", lesson_id: "8PR2-demo-A", kind: "exit", score: 1, item_results: { mastered: true } }),
       admin.from("questions").insert([
@@ -91,6 +95,7 @@ test.describe("sharing (§7.3)", () => {
       scores: true,
       question_summaries: false,
       misconceptions: false,
+      learning_pace: false,
     });
   });
 
@@ -138,12 +143,14 @@ test.describe("sharing (§7.3)", () => {
 
   test("'What my parent sees' reads exactly what the parent reads", async () => {
     await setShared("misconceptions", true);
-    for (const view of ["parent_outcome_status_v", "parent_scores_v", "parent_questions_v", "parent_misconceptions_v", "parent_attendance_v", "parent_reward_progress_v", "sharing_v"]) {
+    await setShared("learning_pace", true);
+    for (const view of ["parent_outcome_status_v", "parent_scores_v", "parent_questions_v", "parent_misconceptions_v", "parent_learning_pace_v", "parent_attendance_v", "parent_reward_progress_v", "sharing_v"]) {
       const asParent = await parentA.from(view).select("*").eq("learner_id", a.learner.id);
       const asLearner = await learnerA.from(view).select("*").eq("learner_id", a.learner.id);
       expect(asLearner.data, view).toEqual(asParent.data);
     }
     await setShared("misconceptions", false);
+    await setShared("learning_pace", false);
   });
 
   test("other families see nothing, and parents never read base learner tables", async () => {

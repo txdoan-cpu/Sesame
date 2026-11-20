@@ -13,6 +13,7 @@ describe("sharing rules (§7.3)", () => {
       ["scores", true, false],
       ["question_summaries", false, false],
       ["misconceptions", false, false],
+      ["learning_pace", false, false],
     ]);
   });
 

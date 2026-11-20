@@ -228,6 +228,10 @@ export function ChildProgress({ view, rewards, curriculum, misconceptionInfo, sa
         )}
       </SharedSection>
 
+      <SharedSection item="learning_pace" sharing={view.sharing} t={t}>
+        <p data-testid="learning-pace">{t.pace[view.learningPace ?? "unknown"]}</p>
+      </SharedSection>
+
       <SharedSection item="misconceptions" sharing={view.sharing} t={t}>
         {!view.misconceptions || view.misconceptions.length === 0 ? (
           <p>{t.misconceptionsEmpty}</p>
