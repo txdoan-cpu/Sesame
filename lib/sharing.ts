@@ -16,8 +16,8 @@ export const SHARING_ITEMS = [
   { item: "scores", defaultShared: true, locked: false },
   { item: "question_summaries", defaultShared: false, locked: false },
   { item: "misconceptions", defaultShared: false, locked: false },
-  // Learning pace (slow / medium / fast) from the learner model, §7.8. Owner decision Round 9: the learner chooses.
-  { item: "learning_pace", defaultShared: false, locked: false },
+  // Learning pace (slow / medium / fast) from the learner model, §7.8. Owner decisions: the learner chooses; shared by default.
+  { item: "learning_pace", defaultShared: true, locked: false },
 ] as const;
 
 export type SharingItem = (typeof SHARING_ITEMS)[number]["item"];

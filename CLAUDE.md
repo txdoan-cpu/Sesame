@@ -176,7 +176,7 @@ tests/
 | scores (lesson scores, exit tickets) | yes | no |
 | question_summaries | no | no |
 | misconceptions | no | no |
-| learning_pace (slow / medium / fast, §7.8; owner decision Round 9) | no | no |
+| learning_pace (slow / medium / fast, §7.8; owner decision Round 9) | yes | no |
 
 When an item is not shared, the parent UI shows "Your child is keeping this private"
 instead of data. The learner sees exactly what the parent sees on a "What my parent sees" page.

@@ -95,7 +95,7 @@ test.describe("sharing (§7.3)", () => {
       scores: true,
       question_summaries: false,
       misconceptions: false,
-      learning_pace: false,
+      learning_pace: true,
     });
   });
 
@@ -143,14 +143,12 @@ test.describe("sharing (§7.3)", () => {
 
   test("'What my parent sees' reads exactly what the parent reads", async () => {
     await setShared("misconceptions", true);
-    await setShared("learning_pace", true);
     for (const view of ["parent_outcome_status_v", "parent_scores_v", "parent_questions_v", "parent_misconceptions_v", "parent_learning_pace_v", "parent_attendance_v", "parent_reward_progress_v", "sharing_v"]) {
       const asParent = await parentA.from(view).select("*").eq("learner_id", a.learner.id);
       const asLearner = await learnerA.from(view).select("*").eq("learner_id", a.learner.id);
       expect(asLearner.data, view).toEqual(asParent.data);
     }
     await setShared("misconceptions", false);
-    await setShared("learning_pace", false);
   });
 
   test("other families see nothing, and parents never read base learner tables", async () => {
