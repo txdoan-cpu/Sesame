@@ -18,9 +18,9 @@ type Phase = "start" | "diagnostic" | "slides" | "exit";
 
 export type PlayerPace = { level: "slow" | "medium" | "fast"; narrationRate: number };
 
-type PlayerProps = { lesson: LessonView; needsDiagnostic: boolean; minutes: number; aiReady: boolean; pace: PlayerPace };
+type PlayerProps = { lesson: LessonView; needsDiagnostic: boolean; minutes: number; aiReady: boolean; pace: PlayerPace; generated?: boolean };
 
-export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady, pace }: PlayerProps) {
+export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady, pace, generated = false }: PlayerProps) {
   const [phase, setPhase] = useState<Phase>("start");
   const [index, setIndex] = useState(0);
   const [diagIndex, setDiagIndex] = useState(0);
@@ -110,6 +110,11 @@ export function LessonPlayer({ lesson, needsDiagnostic, minutes, aiReady, pace }
         <h1 className="text-3xl font-bold">{lesson.title}</h1>
         <p className="text-lg">{t.minutes.replace("{n}", String(minutes))}</p>
         <p>{t.startHint}</p>
+        {generated && (
+          <p className="self-start rounded-full bg-blue-50 px-3 py-1 font-medium text-blue-900 dark:bg-blue-950 dark:text-blue-100" data-testid="lesson-generated">
+            {t.generated}
+          </p>
+        )}
         <p className="text-base text-zinc-700 dark:text-zinc-300" data-testid="lesson-pace" data-pace={pace.level}>
           {t.pace[pace.level]}
         </p>

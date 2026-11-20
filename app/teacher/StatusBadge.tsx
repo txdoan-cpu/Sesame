@@ -5,6 +5,13 @@ const tone: Record<string, string> = {
   draft: "bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100",
 };
 
+/** Badge colour for a generated lesson's status. */
+export function lessonTone(status: string): string {
+  if (status === "delivered" || status === "approved") return "approved";
+  if (status === "review" || status === "generating") return "pending";
+  return "rejected";
+}
+
 /** A small coloured label; the text carries the meaning, the colour only helps. */
 export function StatusBadge({ status, label }: { status: string; label: string }) {
   return (

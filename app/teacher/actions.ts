@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireRole, requireStaff } from "@/lib/auth/dal";
+import { SAMPLE_PROFILES } from "@/lib/generation/context";
+import { generateLesson, runPipeline } from "@/lib/generation/pipeline";
 import { reviewMaterial } from "@/lib/materials/review";
 import { CurriculumInputSchema, OutcomeInputSchema, flagDuplicates, parseCodedList, parseOutcomeImport, type ImportRow, type OutcomeInput } from "@/lib/teacher/schemas";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -239,4 +241,69 @@ export async function setPackPublished(_prev: TeacherState, fd: FormData): Promi
   revalidatePath("/learner", "layout");
   revalidatePath("/parent", "layout");
   return { ok: publish ? "published" : "unpublished" };
+}
+
+// --- Round 10: lesson generation and teacher review (§7.9) ---
+
+/** A teacher generates a lesson for an outcome with a synthetic sample profile (no real learner). */
+export async function generateSampleLesson(_prev: TeacherState, fd: FormData): Promise<TeacherState> {
+  const user = await requireStaff();
+  const p = z
+    .object({ code: z.string().min(1).max(20), sample: z.enum(Object.keys(SAMPLE_PROFILES) as [string, ...string[]]) })
+    .safeParse({ code: field(fd, "code"), sample: field(fd, "sample") });
+  if (!p.success) return { error: "invalid_input" };
+  const id = await generateLesson(p.data.code, { kind: "sample", sampleId: p.data.sample }, user.id);
+  revalidatePath("/teacher/lessons");
+  redirect(`/teacher/lesson/${id}`);
+}
+
+/**
+ * Teacher review (lesson_reviews): approve makes the lesson playable, reject
+ * retires it, revise runs the pipeline again with the teacher's notes.
+ * A lesson with a math error can never be approved (§7.9).
+ */
+export async function reviewLesson(_prev: TeacherState, fd: FormData): Promise<TeacherState> {
+  const user = await requireStaff();
+  const p = z
+    .object({ id: z.string().regex(/^gen-[a-z0-9-]{8,60}$/), decision: z.enum(["approve", "revise", "reject"]), notes: z.string().trim().max(2000) })
+    .safeParse({ id: field(fd, "id"), decision: field(fd, "decision"), notes: field(fd, "notes") });
+  if (!p.success) return { error: "invalid_input" };
+  if (p.data.decision !== "approve" && p.data.notes.length < 10) return { error: "reason_required" };
+
+  const admin = createAdminClient();
+  const { data: row } = await admin
+    .from("lessons")
+    .select("id, outcome_code, learner_id, sample_profile, rubric_s, fit_score, status")
+    .eq("id", p.data.id)
+    .maybeSingle();
+  if (!row) return { error: "not_found" };
+  const rubric = (row.rubric_s ?? {}) as { scores?: Record<string, number> };
+  if (p.data.decision === "approve" && rubric.scores?.S10 !== 3) return { error: "math_blocks" };
+
+  const rev = await admin.from("lesson_reviews").insert({
+    lesson_id: row.id,
+    reviewer_id: user.id,
+    fit_score: row.fit_score,
+    rubric_s: row.rubric_s,
+    decision: p.data.decision,
+    notes: p.data.notes || null,
+  });
+  if (rev.error) return { error: "save_failed" };
+
+  const now = new Date().toISOString();
+  if (p.data.decision === "revise") {
+    await admin.from("lessons").update({ status: "generating", updated_at: now }).eq("id", row.id);
+    const target = row.learner_id
+      ? ({ kind: "learner", learnerId: row.learner_id as string } as const)
+      : ({ kind: "sample", sampleId: row.sample_profile as string } as const);
+    await runPipeline(row.id as string, row.outcome_code as string, target, [p.data.notes]);
+  } else {
+    await admin
+      .from("lessons")
+      .update({ status: p.data.decision === "approve" ? "approved" : "rejected", updated_at: now })
+      .eq("id", row.id);
+  }
+  revalidatePath(`/teacher/lesson/${row.id}`);
+  revalidatePath("/teacher/lessons");
+  return { ok: p.data.decision };
 }

@@ -245,7 +245,9 @@
         "slow": "Today we go step by step, with extra practice.",
         "medium": "Today we go at a steady pace.",
         "fast": "Today we move quickly, with a real-life challenge at the end."
-      }
+      },
+      "preparing": "Your new lesson is being made just for you. Come back in a minute or two.",
+      "generated": "Made for you, checked by Sesame"
     },
     "sharing": {
       "title": "What I share with my parent",
@@ -601,7 +603,8 @@
       "unknown": "Something went wrong.",
       "confirm_required": "Please tick the box to confirm.",
       "default_pack": "The original pack cannot be unpublished.",
-      "nothing_approved": "Approve at least one outcome before publishing."
+      "nothing_approved": "Approve at least one outcome before publishing.",
+      "math_blocks": "This lesson has a math error, so it cannot be approved. Choose revise."
     },
     "publish": {
       "title": "Publish for learners",
@@ -616,6 +619,71 @@
       "unpublish": "Unpublish pack",
       "done": "Pack published.",
       "undone": "Pack unpublished."
+    },
+    "gen": {
+      "lessonsLink": "Generated lessons",
+      "generateTitle": "Generate a lesson",
+      "sampleProfile": "Plan it for (synthetic sample learner)",
+      "generate": "Generate lesson",
+      "generating": "Generating… this can take a minute or two",
+      "listTitle": "Generated lessons",
+      "listIntro": "Lessons the system planned and wrote from approved materials. Learners appear only as a pseudonym; sample lessons were made for a synthetic profile.",
+      "empty": "No generated lessons yet.",
+      "outcome": "Outcome",
+      "forWhom": "For",
+      "score": "Fit score",
+      "status": {
+        "generating": "Generating",
+        "delivered": "Delivered",
+        "review": "Needs review",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "failed": "Failed"
+      },
+      "attempts": "Attempts",
+      "open": "Open",
+      "detailBack": "All generated lessons",
+      "profileTitle": "Profile fields this lesson used",
+      "rationaleTitle": "Why this lesson: the plan",
+      "rulesApplied": "Rules applied",
+      "excluded": "Methods ruled out",
+      "activity": {
+        "activate": "Activate",
+        "present": "Present",
+        "guided_practice": "Guided practice",
+        "apply": "Apply",
+        "close": "Close"
+      },
+      "method": "Method",
+      "methodScore": "Rubric T × evidence: {score}",
+      "alternatives": "Also considered",
+      "citations": "Evidence",
+      "sourcesTitle": "Approved materials used",
+      "rubricTitle": "Rubric S: pedagogical fit {total}/100",
+      "failedGates": "Failed gates: {list}",
+      "noScore": "Not scored.",
+      "attemptsTitle": "Attempts",
+      "attemptLine": "Attempt {n}: {total}",
+      "mathProblems": "Math problems",
+      "slidesTitle": "Slides",
+      "answer": "Answer",
+      "exitTitle": "Exit ticket",
+      "reviewTitle": "Teacher review",
+      "decision": "Decision",
+      "decisions": {
+        "approve": "Approve: learners may get this lesson",
+        "revise": "Revise: generate again with my notes",
+        "reject": "Reject"
+      },
+      "notes": "Notes (needed to revise or reject)",
+      "submitReview": "Save review",
+      "reviewed": {
+        "approve": "Approved.",
+        "revise": "Generated again with your notes.",
+        "reject": "Rejected."
+      },
+      "history": "Review history",
+      "spaced": "Spaced review after {days} days."
     }
   },
   "admin": {

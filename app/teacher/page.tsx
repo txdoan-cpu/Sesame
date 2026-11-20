@@ -39,6 +39,9 @@ async function TeacherHome() {
               {t.adminLink}
             </Link>
           )}
+          <Link href="/teacher/lessons" className="inline-flex min-h-11 items-center rounded-lg border-2 border-current px-4 font-medium">
+            {t.gen.lessonsLink}
+          </Link>
           <LogoutButton label={t.logout} />
         </div>
       </header>

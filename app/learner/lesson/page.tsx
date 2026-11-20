@@ -8,7 +8,9 @@ import { getMyTargetOutcome } from "@/lib/curriculum";
 import { learnerMessages } from "@/lib/i18n";
 import { needsDiagnostic } from "@/lib/learner-profile";
 import { llmConfigured } from "@/lib/llm";
-import { getLessonForOutcome } from "@/lib/lesson/registry";
+import { after } from "next/server";
+import { isGenerating, runPipeline, shouldGenerateFor, startLesson } from "@/lib/generation/pipeline";
+import { todaysLesson } from "@/lib/lesson/library";
 import { toLessonView } from "@/lib/lesson/view";
 import { levelFromProfile } from "@/lib/learner/model";
 import { paceFor } from "@/lib/learner/pace";
@@ -33,12 +35,29 @@ export default function LessonPage() {
 async function Lesson() {
   const user = await requireRole("learner");
   const target = await getMyTargetOutcome();
-  const lesson = target ? getLessonForOutcome(target) : null;
+  const today = target ? await todaysLesson(user.id, target) : null;
+  const lesson = today?.lesson ?? null;
+
+  // §7.9 (owner decision, Round 10): when the goal has approved materials, make a
+  // personalised lesson in the background. Today the learner gets the standard lesson;
+  // the new one is used once the critic delivers it (>= 75) or a teacher approves it.
+  let preparing = false;
+  if (target && !today?.generated) {
+    if (await shouldGenerateFor(user.id, target)) {
+      const id = await startLesson(target, { kind: "learner", learnerId: user.id });
+      after(() => runPipeline(id, target, { kind: "learner", learnerId: user.id }, []));
+      preparing = true;
+    } else {
+      preparing = await isGenerating(user.id, target);
+    }
+  }
 
   if (!lesson) {
     return (
       <>
-        <p className="text-xl">{t.noLesson}</p>
+        <p className="text-xl" data-testid="no-lesson">
+          {preparing ? t.preparing : t.noLesson}
+        </p>
         <Link href="/learner" className="inline-flex min-h-11 items-center self-start font-medium underline">
           {t.backHome}
         </Link>
@@ -66,6 +85,7 @@ async function Lesson() {
       minutes={lesson.minutes}
       aiReady={llmConfigured()}
       pace={{ level: pace.level, narrationRate: pace.narrationRate }}
+      generated={today?.generated ?? false}
     />
   );
 }

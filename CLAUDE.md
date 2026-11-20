@@ -244,6 +244,12 @@ instead of data. The learner sees exactly what the parent sees on a "What my par
   60–74 → regenerate (max 2 times); < 60 or still failing → queue for teacher review
   (`lesson_reviews`). Until a teacher approves, the learner gets the pre-approved standard
   lesson for that LO.
+- Owner decisions (Round 10): generation runs both ways. (a) A teacher generates a lesson for an LO with a
+  synthetic sample profile (`content/profiles/`) to preview and review it. (b) Automatically for a real learner when
+  their target LO has approved materials: generated in the background, the learner gets the standard lesson (if any)
+  until the new one is delivered or approved. Teachers see generated lessons only through `teacher_lessons_v`
+  (pseudonym + profile fields used). A lesson with a math error can never be approved. Every LO needs at least one
+  misconception before generation (exit-ticket distractors map to misconceptions, §7.1).
 
 ## 8. Build rounds (do one round at a time; stop and report at the end of each)
 

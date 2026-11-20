@@ -8,7 +8,8 @@ import { requireStaff } from "@/lib/auth/dal";
 import { getPack } from "@/lib/teacher/data";
 import { BLOOM_LEVELS, KNOWLEDGE_TYPES } from "@/lib/teacher/schemas";
 import en from "@/messages/en.json";
-import { addStrand, approveOutcome, createOutcome, deleteOutcome, setPackPublished } from "../../actions";
+import { SAMPLE_PROFILES } from "@/lib/generation/context";
+import { addStrand, approveOutcome, createOutcome, deleteOutcome, generateSampleLesson, setPackPublished } from "../../actions";
 import { ImportForm } from "../../ImportForm";
 import { MaterialUploadForm } from "../../MaterialUploadForm";
 import { StatusBadge } from "../../StatusBadge";
@@ -40,6 +41,9 @@ async function Pack({ params }: { params: Promise<{ id: string }> }) {
       <header className="flex flex-col gap-2">
         <Link href="/teacher" className="inline-flex min-h-11 items-center self-start font-medium underline">
           ← {t.back}
+        </Link>
+        <Link href="/teacher/lessons" className="inline-flex min-h-11 items-center self-start font-medium underline">
+          {t.gen.lessonsLink}
         </Link>
         <h1 className="text-3xl font-bold" data-testid="pack-title">
           {pack.province} · {t.grade} {pack.grade} · {pack.subject}
@@ -141,6 +145,28 @@ async function Pack({ params }: { params: Promise<{ id: string }> }) {
                       </ul>
                     </details>
                   )}
+                  <details data-testid={`generate-${o.code}`}>
+                    <summary className="min-h-11 cursor-pointer py-2 font-medium">{t.gen.generateTitle}</summary>
+                    <ActionForm
+                      action={generateSampleLesson}
+                      submitLabel={t.gen.generate}
+                      pendingLabel={t.gen.generating}
+                      errors={t.errors}
+                      className="flex flex-col gap-3"
+                    >
+                      <input type="hidden" name="code" value={o.code} />
+                      <label className="flex flex-col gap-1">
+                        {t.gen.sampleProfile}
+                        <select name="sample" defaultValue="demo-A" className={inputClass}>
+                          {Object.entries(SAMPLE_PROFILES).map(([id, s]) => (
+                            <option key={id} value={id}>
+                              {s.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </ActionForm>
+                  </details>
                   {editable && (
                     <div className="flex flex-wrap gap-2">
                       <form action={approveOutcome}>

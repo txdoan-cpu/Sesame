@@ -3,7 +3,7 @@ import { z } from "zod";
 import { answerQuestion } from "@/lib/ask/answer";
 import { loadAskContext } from "@/lib/ask/context";
 import { getCurrentUser } from "@/lib/auth/dal";
-import { getLesson } from "@/lib/lesson/registry";
+import { lessonForLearner } from "@/lib/lesson/library";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { safetyMessage, safetyRoute } from "@/lib/llm/safety";
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
   const parsed = InputSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return reply({ ok: false, code: "invalid_input" }, 400);
   const input = parsed.data;
-  const lesson = getLesson(input.lessonId);
+  const lesson = await lessonForLearner(user.id, input.lessonId);
   if (!lesson || !lesson.slides.some((s) => s.no === input.slideNo)) return reply({ ok: false, code: "invalid_input" }, 400);
 
   if (rateLimited(user.id, Date.now())) return reply({ ok: false, code: "rate_limited" }, 429);

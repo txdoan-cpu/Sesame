@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { classifyEngagement, clampHeartbeat, shouldSendAwayAlert } from "@/lib/engagement";
 import { refreshProfile } from "@/lib/learner/model";
-import { getLesson } from "@/lib/lesson/registry";
+import { lessonForLearner } from "@/lib/lesson/library";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { currentSlot } from "@/lib/time";
 
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
   const now = new Date();
 
   if (input.action === "start") {
-    if (!getLesson(input.lessonId)) return reply({ ok: false, code: "invalid_input" }, 400);
+    if (!(await lessonForLearner(user.id, input.lessonId))) return reply({ ok: false, code: "invalid_input" }, 400);
     const { data: slots } = await admin
       .from("schedules")
       .select("id, weekday, start_time, duration_min, active")

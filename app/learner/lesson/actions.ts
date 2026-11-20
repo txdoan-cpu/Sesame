@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { recordAnswers } from "@/lib/learner/model";
-import { getLesson } from "@/lib/lesson/registry";
+import { lessonForLearner } from "@/lib/lesson/library";
 import { answerMatches, parseNumericAnswer } from "@/lib/math/answer";
 import { saveExitTicket } from "@/lib/lesson/save";
 import { createClient } from "@/lib/supabase/server";
@@ -43,7 +43,7 @@ export async function submitExitTicket(input: unknown): Promise<ExitSummary> {
 
   const parsed = InputSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid_input" };
-  const lesson = getLesson(parsed.data.lessonId);
+  const lesson = await lessonForLearner(user.id, parsed.data.lessonId);
   if (!lesson) return { ok: false, error: "invalid_input" };
   // A retention check only makes sense once the outcome was reached.
   if (parsed.data.kind === "retention" && !(await retentionReady(user.id, lesson.outcome_code))) {
@@ -95,7 +95,7 @@ export async function recordCheckAnswer(input: unknown): Promise<{ ok: boolean }
   if (!user || user.role !== "learner") return { ok: false };
   const p = AnswerInput.safeParse(input);
   if (!p.success) return { ok: false };
-  const lesson = getLesson(p.data.lessonId);
+  const lesson = await lessonForLearner(user.id, p.data.lessonId);
   if (!lesson) return { ok: false };
 
   const fromSlides = lesson.slides.flatMap((s) => s.checkpoint?.items ?? []).find((i) => i.id === p.data.itemId);

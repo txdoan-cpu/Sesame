@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { deliverableLesson, isGenerating, shouldGenerateFor } from "@/lib/generation/pipeline";
 import { getLessonForOutcome } from "@/lib/lesson/registry";
 import { LogoutButton } from "@/app/_components/LogoutButton";
 import { OutcomeBoard } from "@/app/_components/OutcomeBoard";
@@ -39,6 +40,13 @@ async function LearnerHome() {
     getMyNotifications(),
     getMyRetentionChecks(),
   ]);
+  // A lesson exists for the goal: the standard one, or a generated one ready / being made (§7.9).
+  const hasLesson =
+    target !== null &&
+    (getLessonForOutcome(target) !== null ||
+      (await deliverableLesson(user.id, target)) !== null ||
+      (await isGenerating(user.id, target)) ||
+      (await shouldGenerateFor(user.id, target)));
 
   return (
     <>
@@ -47,7 +55,7 @@ async function LearnerHome() {
         <LogoutButton label={t.logout} />
       </header>
       <p className="text-lg">{t.intro}</p>
-      {target && getLessonForOutcome(target) && (
+      {hasLesson && (
         <Link
           href="/learner/lesson"
           className="inline-flex min-h-11 items-center self-start rounded-lg bg-blue-700 px-6 text-lg font-semibold text-white"
