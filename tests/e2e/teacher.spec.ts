@@ -36,6 +36,7 @@ test.describe("teacher input (Round 8)", () => {
   const userIds: string[] = [];
   let fam: TestFamily;
   let apiTeacherId = "";
+  let packUrl = "";
 
   test.beforeAll(async ({}, testInfo) => {
     test.skip(testInfo.project.name !== "desktop", "Runs once");
@@ -125,6 +126,9 @@ test.describe("teacher input (Round 8)", () => {
     await pack.getByRole("button", { name: "Create pack" }).click();
     await expect(page).toHaveURL(/\/teacher\/pack\/[0-9a-f-]{36}$/);
     await expect(page.getByTestId("pack-title")).toContainText("Grade 9");
+    // Teachers cannot publish; only admins can.
+    await expect(page.getByTestId("publish-section")).toContainText("Only an admin can publish");
+    await expect(page.getByTestId("publish-form")).toHaveCount(0);
 
     // A new LO by form.
     const lo = page.getByTestId("add-outcome");
@@ -163,7 +167,7 @@ test.describe("teacher input (Round 8)", () => {
     await expect(imp.getByText("1 outcomes saved as drafts.")).toBeVisible();
     await expect(page.getByTestId(`outcome-${codeB}`)).toBeVisible();
 
-    const packUrl = page.url();
+    packUrl = page.url();
 
     // Material 1: accurate text → approved.
     const up = page.getByTestId("material-upload");
@@ -212,6 +216,57 @@ test.describe("teacher input (Round 8)", () => {
     // Both materials are listed on the pack.
     await page.goto(packUrl);
     await expect(page.getByTestId("material-list").locator("li")).toHaveCount(2);
+  });
+
+  test("only an admin publishes a pack; learners see approved outcomes only while it is published", async ({ page }) => {
+    test.setTimeout(120_000);
+    test.skip(!packUrl, "needs the pack from the previous test");
+    const learner = await signedIn(learnerEmailFor(fam));
+    const codesSeen = async () => ((await learner.from("outcomes").select("code")).data ?? []).map((o) => o.code as string);
+
+    await loginStaff(page, adminEmail, /\/admin$/);
+    await page.goto(packUrl);
+    const section = page.getByTestId("publish-section");
+
+    // Nothing approved yet → refused.
+    const form = page.getByTestId("publish-form");
+    await form.getByRole("checkbox").check();
+    await form.getByRole("button", { name: "Publish pack" }).click();
+    await expect(form.getByText("Approve at least one outcome before publishing.")).toBeVisible();
+
+    // Approve codeA (codeB stays a draft), then publish; keep the window short (shared database).
+    await page.getByTestId(`outcome-${codeA}`).getByRole("button", { name: "Approve" }).click();
+    await expect(page.getByTestId(`outcome-${codeA}`)).toContainText("Approved");
+    try {
+      await form.getByRole("checkbox").check();
+      await form.getByRole("button", { name: "Publish pack" }).click();
+      await expect(form.getByText("Pack published.")).toBeVisible();
+      const seen = await codesSeen();
+      expect(seen).toContain(codeA);
+      expect(seen).not.toContain(codeB);
+      expect(seen.length).toBe(PUBLISHED_OUTCOMES + 1);
+      await page.reload();
+      await expect(page.getByTestId("pack-published")).toHaveText("Published");
+    } finally {
+      // Unpublish through the UI; fall back to the service role so the live demo never keeps it.
+      await page.reload();
+      const f2 = page.getByTestId("publish-form");
+      const admin = adminClient();
+      try {
+        await f2.getByRole("checkbox").check();
+        await f2.getByRole("button", { name: "Unpublish pack" }).click();
+        await expect(f2.getByText("Pack unpublished.")).toBeVisible();
+        await page.reload();
+        await expect(page.getByTestId("pack-published")).toHaveText("Not published");
+      } finally {
+        // Safety net: the live demo must never keep these outcomes.
+        await admin.from("outcomes").update({ published: false }).in("code", [codeA, codeB]);
+        await admin.from("curricula").update({ published: false }).ilike("source_title", `%${tag}%`);
+      }
+    }
+    expect(await codesSeen()).not.toContain(codeA);
+    expect((await codesSeen()).length).toBe(PUBLISHED_OUTCOMES);
+    await expect(section).toBeVisible();
   });
 
   test("a teacher cannot read learner or parent data", async () => {

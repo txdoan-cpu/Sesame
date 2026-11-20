@@ -8,7 +8,7 @@ import { requireStaff } from "@/lib/auth/dal";
 import { getPack } from "@/lib/teacher/data";
 import { BLOOM_LEVELS, KNOWLEDGE_TYPES } from "@/lib/teacher/schemas";
 import en from "@/messages/en.json";
-import { addStrand, approveOutcome, createOutcome, deleteOutcome } from "../../actions";
+import { addStrand, approveOutcome, createOutcome, deleteOutcome, setPackPublished } from "../../actions";
 import { ImportForm } from "../../ImportForm";
 import { MaterialUploadForm } from "../../MaterialUploadForm";
 import { StatusBadge } from "../../StatusBadge";
@@ -16,6 +16,7 @@ import { StatusBadge } from "../../StatusBadge";
 export const metadata: Metadata = { title: "Curriculum pack — Sesame" };
 
 const t = en.teacher;
+const DEFAULT_PACK_ID = "00000000-0000-4000-8000-000000000008";
 
 export default function PackPage({ params }: PageProps<"/teacher/pack/[id]">) {
   return (
@@ -51,9 +52,40 @@ async function Pack({ params }: { params: Promise<{ id: string }> }) {
           ) : (
             pack.source_title
           )}{" "}
-          · {pack.published ? t.published : t.unpublished}
+          · <span data-testid="pack-published">{pack.published ? t.published : t.unpublished}</span>
         </p>
       </header>
+
+      <section aria-labelledby="publish-title" className={cardClass} data-testid="publish-section">
+        <h2 id="publish-title" className="text-2xl font-semibold">
+          {t.publish.title}
+        </h2>
+        {user.role !== "admin" ? (
+          <p>{t.publish.adminOnly}</p>
+        ) : pack.id === DEFAULT_PACK_ID ? (
+          <p>{t.publish.defaultPack}</p>
+        ) : (
+          <>
+            <p>{pack.published ? t.publish.introPublished : t.publish.intro}</p>
+            <p className="rounded-lg bg-amber-50 p-3 font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-100">{t.publish.sharedWarning}</p>
+            <ActionForm
+              action={setPackPublished}
+              submitLabel={pack.published ? t.publish.unpublish : t.publish.publish}
+              pendingLabel={en.auth.pending}
+              errors={t.errors}
+              success={{ published: t.publish.done, unpublished: t.publish.undone }}
+              testId="publish-form"
+            >
+              <input type="hidden" name="packId" value={pack.id} />
+              <input type="hidden" name="publish" value={pack.published ? "false" : "true"} />
+              <label className="inline-flex min-h-11 items-center gap-2">
+                <input type="checkbox" name="confirm" value="yes" required className="h-5 w-5" />
+                {pack.published ? t.publish.confirmUnpublish : t.publish.confirm}
+              </label>
+            </ActionForm>
+          </>
+        )}
+      </section>
 
       <section aria-labelledby="outcomes-title" className="flex flex-col gap-3">
         <h2 id="outcomes-title" className="text-2xl font-semibold">

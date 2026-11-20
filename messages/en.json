@@ -585,7 +585,24 @@
       "file_type": "Use a PDF, PNG, JPEG, WebP or text file.",
       "unknown_outcome": "Pick outcomes from this pack.",
       "upload_failed": "The file could not be stored.",
-      "unknown": "Something went wrong."
+      "unknown": "Something went wrong.",
+      "confirm_required": "Please tick the box to confirm.",
+      "default_pack": "The original pack cannot be unpublished.",
+      "nothing_approved": "Approve at least one outcome before publishing."
+    },
+    "publish": {
+      "title": "Publish for learners",
+      "adminOnly": "Only an admin can publish a pack. Ask an admin when the outcomes are approved.",
+      "defaultPack": "This is the original pack. It is always published.",
+      "intro": "Publishing shows this pack's approved outcomes (with their indicators and misconceptions) to learners and parents. Draft outcomes stay hidden.",
+      "introPublished": "This pack is published. Unpublishing hides its outcomes from learners and parents again.",
+      "sharedWarning": "The database is shared with the live demo on Vercel: learners and parents there will see the change too.",
+      "confirm": "I understand learners and parents (also on the live demo) will see these outcomes.",
+      "confirmUnpublish": "I understand learners and parents will no longer see these outcomes.",
+      "publish": "Publish pack",
+      "unpublish": "Unpublish pack",
+      "done": "Pack published.",
+      "undone": "Pack unpublished."
     }
   },
   "admin": {

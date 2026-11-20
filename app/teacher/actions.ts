@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { requireStaff } from "@/lib/auth/dal";
+import { requireRole, requireStaff } from "@/lib/auth/dal";
 import { reviewMaterial } from "@/lib/materials/review";
 import { CurriculumInputSchema, OutcomeInputSchema, flagDuplicates, parseCodedList, parseOutcomeImport, type ImportRow, type OutcomeInput } from "@/lib/teacher/schemas";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -200,4 +200,43 @@ export async function overrideMaterial(_prev: TeacherState, fd: FormData): Promi
   if (r.error) return { error: "save_failed" };
   revalidatePath(`/teacher/material/${p.data.id}`);
   return { ok: true };
+}
+
+const DEFAULT_PACK_ID = "00000000-0000-4000-8000-000000000008";
+
+/**
+ * Admin publishes a pack: the pack, its strands, and its APPROVED outcomes
+ * (with their indicators and misconceptions) become visible to learners and
+ * parents. Drafts stay hidden. The database is shared with the live demo, so
+ * the form asks the admin to confirm.
+ */
+export async function setPackPublished(_prev: TeacherState, fd: FormData): Promise<TeacherState> {
+  await requireRole("admin");
+  const p = z
+    .object({ packId: z.uuid(), publish: z.enum(["true", "false"]), confirm: z.literal("yes") })
+    .safeParse({ packId: field(fd, "packId"), publish: field(fd, "publish"), confirm: field(fd, "confirm") });
+  if (!p.success) return { error: "confirm_required" };
+  const { packId } = p.data;
+  const publish = p.data.publish === "true";
+  // The original NL Grade 8 pack is what the live demo shows; it is never unpublished here.
+  if (packId === DEFAULT_PACK_ID && !publish) return { error: "default_pack" };
+
+  const db = await createClient();
+  const { data: outcomes } = await db.from("outcomes").select("code, status").eq("curriculum_id", packId);
+  const codes = (outcomes ?? []).filter((o) => !publish || o.status === "approved").map((o) => o.code as string);
+  if (publish && codes.length === 0) return { error: "nothing_approved" };
+
+  const results = await Promise.all([
+    db.from("curricula").update({ published: publish }).eq("id", packId),
+    db.from("strands").update({ published: publish }).eq("curriculum_id", packId),
+    codes.length ? db.from("outcomes").update({ published: publish }).in("code", codes) : null,
+    codes.length ? db.from("indicators").update({ published: publish }).in("outcome_code", codes) : null,
+    codes.length ? db.from("misconceptions").update({ published: publish }).in("outcome_code", codes) : null,
+  ]);
+  if (results.some((r) => r?.error)) return { error: "save_failed" };
+  revalidatePath(`/teacher/pack/${packId}`);
+  revalidatePath("/teacher");
+  revalidatePath("/learner", "layout");
+  revalidatePath("/parent", "layout");
+  return { ok: publish ? "published" : "unpublished" };
 }
