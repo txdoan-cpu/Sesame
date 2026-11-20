@@ -1,0 +1,15 @@
+{
+  "id": "rubric_t",
+  "title": "Rubric T: teaching methods, per activity, per learner (Appendix C).",
+  "scale": "Each criterion 0-3. Score(m) = evidence_weight(m) x sum(w_i x T_i(m)) / 3, so 0-100.",
+  "criteria": [
+    { "id": "T1", "weight": 20, "name": "Fits knowledge type and Bloom level" },
+    { "id": "T2", "weight": 20, "name": "Fits readiness (expertise reversal)" },
+    { "id": "T3", "weight": 10, "name": "Fits learning pace" },
+    { "id": "T4", "weight": 10, "name": "Addresses known misconceptions" },
+    { "id": "T5", "weight": 15, "name": "ICAP engagement level" },
+    { "id": "T6", "weight": 10, "name": "Works 1:1 with slides and voice in the time available" },
+    { "id": "T7", "weight": 15, "name": "Builds in feedback / formative assessment" }
+  ],
+  "icap_scores": { "passive": 0, "active": 2, "constructive": 3, "interactive": 3 }
+}

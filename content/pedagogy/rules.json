@@ -1,0 +1,98 @@
+{
+  "id": "rules",
+  "title": "Decision rules D1-D8 (Appendix C): hard filters and requirements applied before scoring.",
+  "rules": [
+    {
+      "id": "D1",
+      "text": "Readiness < 0.6: no unguided discovery; start with worked examples, then fade.",
+      "when": {
+        "readiness_lt": 0.6
+      },
+      "exclude": [
+        "guided_discovery"
+      ],
+      "require": {
+        "present": "direct_instruction_worked_examples",
+        "guided_practice": "faded_examples"
+      }
+    },
+    {
+      "id": "D2",
+      "text": "Mastery >= 0.8: replace worked examples with problems and transfer tasks.",
+      "when": {
+        "mastery_gte": 0.8
+      },
+      "exclude": [
+        "direct_instruction_worked_examples",
+        "faded_examples",
+        "concreteness_fading"
+      ],
+      "require": {
+        "apply": "problem_solving_transfer"
+      }
+    },
+    {
+      "id": "D3",
+      "text": "Misconception present: include a correct / incorrect solution comparison.",
+      "when": {
+        "has_misconceptions": true
+      },
+      "require_somewhere": {
+        "method": "compare_solutions_incorrect_examples",
+        "activities": [
+          "apply",
+          "guided_practice"
+        ]
+      }
+    },
+    {
+      "id": "D4",
+      "text": "New symbolic concept: concrete -> pictorial -> symbolic sequence.",
+      "when": {
+        "new_symbolic": true
+      },
+      "require": {
+        "present": "concreteness_fading"
+      }
+    },
+    {
+      "id": "D5",
+      "text": "Consolidation: retrieval practice and spaced review.",
+      "when": {
+        "mastery_gte": 0.6
+      },
+      "require": {
+        "close": "retrieval_spacing_interleaving"
+      },
+      "spaced_review": true
+    },
+    {
+      "id": "D6",
+      "text": "Every activity at least ICAP Active; prefer Constructive (spoken self-explanation).",
+      "when": {},
+      "exclude_icap": [
+        "passive"
+      ],
+      "prefer_icap": "constructive"
+    },
+    {
+      "id": "D7",
+      "text": "Move to a new LO only at >= 80%: review prerequisites below 0.8 first.",
+      "when": {
+        "weak_prerequisites": true
+      },
+      "require": {
+        "activate": "retrieval_spacing_interleaving"
+      },
+      "prerequisite_review": true
+    },
+    {
+      "id": "D8",
+      "text": "Never adapt to learning styles.",
+      "when": {},
+      "exclude_evidence": [
+        "excluded"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "learner_id": "sample-fast",
+  "grade": 8,
+  "school_context": "St. John's, NL (English program)",
+  "target_outcome": "8PR2",
+  "mastery": { "8PR2.one_step": 0.95, "8PR2.two_step": 0.85, "8PR2.distributive": 0.82, "8N7.integers": 0.9 },
+  "misconceptions": [],
+  "affect": { "math_anxiety": "low", "confidence_self_report": 4 },
+  "reading_level": "grade 8",
+  "language": { "primary": "English", "ell": false },
+  "accessibility": [],
+  "interests": ["soccer", "music"],
+  "evidence": ["synthetic sample profile for teacher previews"],
+  "confidence_of_estimate": 0.8,
+  "learning_rate": { "level": "fast", "p_transit": 0.35 }
+}

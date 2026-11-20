@@ -1,4 +1,5 @@
 import "server-only";
+import { mockAuthor, mockCritic } from "@/lib/generation/mock";
 import type { HealthResult, LlmRequest, LlmResult } from "./types";
 
 /**
@@ -12,6 +13,8 @@ import type { HealthResult, LlmRequest, LlmResult } from "./types";
 export async function mockGenerate(req: LlmRequest): Promise<LlmResult> {
   const base = { ok: true as const, provider: "mock", model: "mock-1" };
   if (req.user.includes('"task":"rubric_r"')) return { ...base, text: mockRubric(req.user) };
+  if (req.user.includes('"task":"author_lesson"')) return { ...base, text: mockAuthor(req.user) };
+  if (req.user.includes('"task":"critic_s"')) return { ...base, text: mockCritic() };
   if (req.images?.length && req.user.startsWith("Transcribe")) return { ...base, text: "Solve 2x + 3 = 11. Subtract 3 from both sides, then divide by 2." };
   let payload: { question?: string; slide?: { title?: string; indicators?: string[] }; exit_ticket_equations?: string[] } = {};
   try {

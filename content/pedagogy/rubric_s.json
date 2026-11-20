@@ -1,0 +1,26 @@
+{
+  "id": "rubric_s",
+  "title": "Rubric S: slide deck review, Pedagogical Fit Score 0-100 (Appendix C).",
+  "scale": "Each criterion 0-3: 0 not met, 1 weak, 2 good, 3 exemplary. Total = sum(weight x score / 3).",
+  "gate_min": 2,
+  "deliver_min": 75,
+  "regenerate_min": 60,
+  "max_regenerations": 2,
+  "criteria": [
+    { "id": "S1", "gate": true, "weight": 15, "name": "LO x slide matrix", "check": "Each indicator has at least one teaching slide and one checking slide.", "by": "code" },
+    { "id": "S2", "gate": false, "weight": 5, "name": "Bloom level", "check": "The thinking the slides ask for matches the outcome's Bloom level.", "by": "model" },
+    { "id": "S3", "gate": false, "weight": 5, "name": "All activities present", "check": "Activate, present, guided practice, apply and close are all there.", "by": "code" },
+    { "id": "S4", "gate": false, "weight": 10, "name": "Methods match the decision model", "check": "Each slide uses the method the planner chose for its activity, following D1-D8.", "by": "code" },
+    { "id": "S5", "gate": false, "weight": 10, "name": "Checks and feedback", "check": "Regular checks, each with hints or feedback.", "by": "code" },
+    { "id": "S6", "gate": false, "weight": 5, "name": "Coherence, no decoration", "check": "Every slide serves the outcome; nothing decorative or off-topic.", "by": "model" },
+    { "id": "S7", "gate": false, "weight": 5, "name": "Image next to its text", "check": "Each visual explains the text beside it.", "by": "model" },
+    { "id": "S8", "gate": false, "weight": 5, "name": "One idea per slide, stepped examples", "check": "Each slide has one idea; examples go step by step.", "by": "model" },
+    { "id": "S9", "gate": false, "weight": 5, "name": "Signalling; narration not copied onto slides", "check": "Key steps are signalled and slide text does not copy the narration.", "by": "model" },
+    { "id": "S10", "gate": true, "weight": 10, "name": "No math errors", "check": "Every equation and answer passes substitution (lib/math/check.ts).", "by": "code" },
+    { "id": "S11", "gate": true, "weight": 5, "name": "Age-appropriate, unbiased, sources cited", "check": "Suitable for 13-14 year olds, no bias, every content slide cites an approved material.", "by": "model+code" },
+    { "id": "S12", "gate": false, "weight": 5, "name": "Content, design and coherence", "check": "Overall quality of content, design and coherence.", "by": "model" },
+    { "id": "S13", "gate": false, "weight": 5, "name": "Contrast and phone readability", "check": "Text contrast at least 4.5:1 and readable on a phone (the player's theme guarantees this).", "by": "code" },
+    { "id": "S14", "gate": false, "weight": 5, "name": "Prerequisite review and misconception slides", "check": "Review slides for prerequisites below 0.7, and slides for known misconceptions.", "by": "code" },
+    { "id": "S15", "gate": false, "weight": 5, "name": "Pacing matches the pace table", "check": "Practice items and check frequency follow the learner's pace.", "by": "code" }
+  ]
+}

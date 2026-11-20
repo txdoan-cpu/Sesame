@@ -6,10 +6,13 @@ import { z } from "zod";
  * verify it and the renderer can turn it into KaTeX.
  */
 
-const MisconceptionCode = z.string().regex(/^M\d+$/);
-const IndicatorCode = z.string().regex(/^PR\d+\.\d+$/);
+// Codes follow the teacher's curriculum pack (Round 8), so any short code is allowed:
+// "PR2.3" for NL Grade 8, "9PR3.1" for a pack a teacher added.
+const Code = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,29}$/);
+const MisconceptionCode = Code;
+const IndicatorCode = Code;
 /** Skill id for the learner model (§7.8), same keys as learner_profiles.mastery, e.g. "8PR2.two_step". */
-export const SkillId = z.string().regex(/^8(N|PR|SS|SP)\d+\.[a-z_]+$/);
+export const SkillId = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]*\.[a-z_]+$/);
 
 /** A typed or spoken numeric answer. `equation` (if given) must be satisfied by `answer`. */
 export const NumericItemSchema = z.object({
@@ -104,6 +107,10 @@ export const SlideSchema = z.object({
     .refine((c) => !c.pacing || Object.values(c.pacing).flat().every((id) => c.items.some((i) => i.id === id)), "pacing lists only items of this checkpoint")
     .optional(),
   indicators: z.array(IndicatorCode).default([]),
+  /** Generated lessons (Round 10): the activity and method the planner chose, and the approved materials used. */
+  activity: z.enum(["activate", "present", "guided_practice", "apply", "close"]).optional(),
+  method: z.string().optional(),
+  sources: z.array(z.string()).optional(),
 });
 
 export const ExitChoiceSchema = z
