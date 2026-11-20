@@ -13,6 +13,8 @@ import { overrideMaterial, rescoreMaterial } from "../../actions";
 import { StatusBadge } from "../../StatusBadge";
 
 export const metadata: Metadata = { title: "Material review — Sesame" };
+// Lesson generation and AI scoring can take a minute or more on Vercel (§7.9).
+export const maxDuration = 300;
 
 const t = en.teacher;
 

@@ -12,6 +12,9 @@ import { createClient } from "@/lib/supabase/server";
 // in the private "materials" bucket, extracts the text and scores Rubric R.
 // A route handler (not a server action) so files up to 10 MB are accepted locally.
 
+// Text extraction and Rubric R scoring call the model.
+export const maxDuration = 120;
+
 export type MaterialUploadResponse = { ok: true; id: string; status: string } | { ok: false; code: string; detail?: string };
 
 const EXT_TYPES: Record<string, string> = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", txt: "text/plain", md: "text/markdown", csv: "text/csv" };

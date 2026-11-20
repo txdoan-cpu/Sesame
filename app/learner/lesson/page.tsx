@@ -19,6 +19,8 @@ import en from "@/messages/en.json";
 import { LessonPlayer } from "./LessonPlayer";
 
 export const metadata: Metadata = { title: "Today's lesson — Sesame" };
+// Lesson generation and AI scoring can take a minute or more on Vercel (§7.9).
+export const maxDuration = 300;
 
 const t = learnerMessages.lesson;
 

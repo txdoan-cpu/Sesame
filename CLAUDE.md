@@ -211,8 +211,8 @@ instead of data. The learner sees exactly what the parent sees on a "What my par
 - Materials: upload PDF/image/text or paste a URL; licence is required (CC licence, public
   document, or fair dealing note). Link each material to one or more outcomes.
 - Owner decisions (Round 8): teacher accounts are created by an admin in the app (`/admin`);
-  the first admin is created with `npm run admin:create`. Round 8+ work lives on branch
-  `UpdateTeacherAgent`, committed locally only (not pushed; the live Vercel demo stays on `main`).
+  the first admin is created with `npm run admin:create`. Rounds 8-10 were built on branch
+  `UpdateTeacherAgent` and merged into `main` on 2026-11-20 at the owner's request (live on Vercel).
   The Supabase database is shared with the live demo, so migrations are additive only, and new
   curriculum packs, outcomes, indicators, misconceptions and materials are visible only to
   teachers and admins until a pack is published: learners and parents keep seeing the 17 NL

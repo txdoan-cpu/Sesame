@@ -13,6 +13,8 @@ import { reviewLesson } from "../../actions";
 import { StatusBadge, lessonTone } from "../../StatusBadge";
 
 export const metadata: Metadata = { title: "Generated lesson — Sesame" };
+// Lesson generation and AI scoring can take a minute or more on Vercel (§7.9).
+export const maxDuration = 300;
 
 const t = en.teacher;
 const g = en.teacher.gen;

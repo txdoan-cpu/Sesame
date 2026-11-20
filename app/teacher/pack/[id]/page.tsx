@@ -15,6 +15,8 @@ import { MaterialUploadForm } from "../../MaterialUploadForm";
 import { StatusBadge } from "../../StatusBadge";
 
 export const metadata: Metadata = { title: "Curriculum pack — Sesame" };
+// Lesson generation and AI scoring can take a minute or more on Vercel (§7.9).
+export const maxDuration = 300;
 
 const t = en.teacher;
 const DEFAULT_PACK_ID = "00000000-0000-4000-8000-000000000008";
