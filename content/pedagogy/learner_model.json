@@ -1,0 +1,10 @@
+{
+  "id": "learner_model",
+  "title": "Automatic learner model (CLAUDE.md 7.8): standard BKT with individualized learning rate",
+  "bkt_defaults": { "p_init": 0.3, "p_transit": 0.2, "p_slip": 0.1, "p_guess": 0.2 },
+  "reestimate_every_answers": 20,
+  "transit_grid": { "min": 0.01, "max": 0.5, "step": 0.01 },
+  "learning_rate_levels": { "slow_below": 0.15, "fast_above": 0.3 },
+  "mastery_target": 0.95,
+  "confidence": { "answers_for_half": 10, "max": 0.95 }
+}

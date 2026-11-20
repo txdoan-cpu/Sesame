@@ -1,0 +1,12 @@
+{
+  "id": "pace",
+  "title": "Pace table (Appendix C)",
+  "levels": ["slow", "medium", "fast"],
+  "segment_minutes_max": { "slow": 3, "medium": 4, "fast": 5 },
+  "worked_examples_before_fading": { "slow": 3, "medium": 2, "fast": 1 },
+  "check_every_minutes": { "slow": 2, "medium": 3, "fast": 4 },
+  "practice_items": { "slow": [6, 8], "medium": [4, 6], "fast": [2, 3] },
+  "transfer_items": { "slow": 0, "medium": 0, "fast": 1 },
+  "review_after_days": { "slow": [1, 3, 7], "medium": [2, 7], "fast": [7] },
+  "narration_rate": { "slow": 0.9, "medium": 1.0, "fast": 1.05 }
+}
